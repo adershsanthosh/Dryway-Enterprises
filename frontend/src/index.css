@@ -211,12 +211,22 @@ button, input, select, textarea {
 
 /* Cross-Platform Responsiveness Breakpoints */
 @media (min-width: 1280px) {
+  :root {
+    --product-img-height: 180px;
+  }
   .container {
     max-width: 1280px;
+  }
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
   }
 }
 
 @media (max-width: 1024px) {
+  :root {
+    --product-img-height: 155px;
+  }
   .container {
     padding: 0 1.25rem;
   }
@@ -226,43 +236,61 @@ button, input, select, textarea {
     gap: 2rem;
   }
   .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
+  :root {
+    --product-img-height: 120px;
+  }
   .container {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
   }
   .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr); /* Exactly 3 Products in a Line on Mobile */
+    gap: 0.5rem;
   }
   .nav-user-name {
     display: none;
   }
   button, input, select {
-    min-height: 42px;
+    min-height: 38px;
   }
 }
 
 @media (max-width: 480px) {
+  :root {
+    --product-img-height: 100px;
+  }
   .container {
-    padding: 0 0.85rem;
+    padding: 0 0.5rem;
   }
   h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
   }
   h2 {
-    font-size: 1.35rem !important;
+    font-size: 1.2rem !important;
   }
   .grid-responsive {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr); /* Exactly 3 Products in a Line on Small Mobile Phones */
+    gap: 0.4rem;
   }
   .glass-card {
-    padding: 1.25rem !important;
+    padding: 0.5rem !important;
+    border-radius: 10px !important;
+  }
+  .product-card-desc {
+    display: none !important;
+  }
+  .product-card-title {
+    font-size: 0.75rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 0.2rem !important;
+  }
+  .product-card-price {
+    font-size: 0.75rem !important;
   }
 }
 

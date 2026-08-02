@@ -442,114 +442,174 @@ const Home = () => {
             No products found matching "{search}" in {selectedCategory}.
           </div>
         ) : (
-          /* Products Grid */
-          <div className="grid-responsive">
-            {filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="glass-card animate-fade-in"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  padding: '1.1rem',
-                  borderRadius: '14px',
-                  border: '1px solid var(--border-color)',
-                  background: 'var(--bg-secondary)',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
-                }}
-              >
-                {/* Product Image Panel */}
-                <div className="product-image-container" style={{ position: 'relative', overflow: 'hidden', borderRadius: '10px', marginBottom: '0.85rem' }}>
-                  <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  {/* Wishlist Toggle Heart Button */}
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      toggleWishlist(product);
-                    }}
-                    title={isInWishlist(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      zIndex: 5,
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      border: '1px solid var(--border-color)',
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: isInWishlist(product._id) ? '#e11d48' : 'var(--text-primary)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    <Heart size={16} fill={isInWishlist(product._id) ? '#e11d48' : 'none'} />
-                  </button>
+          /* Products Rendered Section-Wise */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
+            {(selectedCategory === 'All' && !search
+              ? categories.filter((cat) => cat !== 'All')
+              : [selectedCategory]
+            ).map((catName) => {
+              const categoryProducts = filteredProducts.filter(
+                (p) => p.category === catName || selectedCategory !== 'All' || search
+              );
+
+              if (categoryProducts.length === 0) return null;
+
+              return (
+                <div key={catName} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Category Section Header */}
                   <div
                     style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '10px',
-                      background: 'rgba(255, 255, 255, 0.92)',
-                      backdropFilter: 'blur(6px)',
-                      color: 'var(--text-primary)',
-                      fontWeight: 800,
-                      padding: '0.3rem 0.65rem',
-                      borderRadius: '6px',
-                      fontSize: '0.85rem',
-                      border: '1px solid var(--border-color)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      borderBottom: '2px solid var(--border-color)',
+                      paddingBottom: '0.65rem',
                     }}
                   >
-                    {product.isOffer ? (
-                      <span>
-                        <strong style={{ color: '#e11d48' }}>₹{product.offerPrice}</strong>{' '}
-                        <small style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.7rem' }}>₹{product.price}</small>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <span style={{ fontSize: '1.2rem' }}>
+                        {catName.includes('Snacks') ? '🍇' : catName.includes('Kitchen') ? '🍳' : catName.includes('Cook') ? '🍲' : catName.includes('Wellness') ? '🌿' : '🍫'}
                       </span>
-                    ) : (
-                      <strong style={{ color: '#e11d48' }}>₹{product.price}</strong>
-                    )}
-                  </div>
-                </div>
+                      <h3 style={{ fontSize: '1.35rem', color: 'var(--text-primary)', fontFamily: 'var(--font-headings)' }}>
+                        {catName}
+                      </h3>
+                      <span
+                        style={{
+                          background: 'var(--bg-tertiary)',
+                          color: 'var(--text-secondary)',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '12px',
+                          border: '1px solid var(--border-color)',
+                        }}
+                      >
+                        {categoryProducts.length} items
+                      </span>
+                    </div>
 
-                {/* Product Detail Text */}
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <span style={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem' }}>
-                    {product.category}
-                  </span>
-                  <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.4rem', fontWeight: 700, lineHeight: 1.25 }}>
-                    {product.title}
-                  </h3>
-                  <p className="product-card-desc" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '1rem', flex: 1, lineHeight: 1.4 }}>
-                    {product.description}
-                  </p>
-
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
-                    <Link to={`/product/${product._id}`} className="btn btn-secondary" style={{ flex: 1, padding: '0.65rem', fontSize: '0.85rem', justifyContent: 'center' }}>
-                      <Eye size={16} />
-                      Details
-                    </Link>
                     <button
-                      onClick={() => addToCart(product, 1)}
-                      disabled={product.countInStock <= 0}
-                      className="btn btn-primary"
-                      style={{ flex: 1, padding: '0.65rem', fontSize: '0.85rem', justifyContent: 'center' }}
+                      onClick={() => setSelectedCategory(catName)}
+                      style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer' }}
                     >
-                      <ShoppingBag size={16} />
-                      {product.countInStock > 0 ? 'Buy' : 'Out of Stock'}
+                      View All →
                     </button>
                   </div>
+
+                  {/* Products Grid - 3 per line on mobile */}
+                  <div className="grid-responsive">
+                    {categoryProducts.map((product) => (
+                      <div
+                        key={product._id}
+                        className="glass-card animate-fade-in"
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          height: '100%',
+                          padding: '0.75rem',
+                          borderRadius: '12px',
+                          border: '1px solid var(--border-color)',
+                          background: 'var(--bg-secondary)',
+                        }}
+                      >
+                        {/* Product Image Panel */}
+                        <div className="product-image-container" style={{ position: 'relative', overflow: 'hidden', borderRadius: '8px', marginBottom: '0.6rem' }}>
+                          <img
+                            src={product.images[0]}
+                            alt={product.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+
+                          {/* Wishlist Toggle Heart Button */}
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleWishlist(product);
+                            }}
+                            title={isInWishlist(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              right: '6px',
+                              zIndex: 5,
+                              background: 'rgba(255, 255, 255, 0.9)',
+                              border: '1px solid var(--border-color)',
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              color: isInWishlist(product._id) ? '#e11d48' : 'var(--text-primary)',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                            }}
+                          >
+                            <Heart size={14} fill={isInWishlist(product._id) ? '#e11d48' : 'none'} />
+                          </button>
+
+                          {/* Price Tag Overlay */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              left: '6px',
+                              background: 'rgba(255, 255, 255, 0.92)',
+                              backdropFilter: 'blur(4px)',
+                              color: 'var(--text-primary)',
+                              fontWeight: 800,
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              border: '1px solid var(--border-color)',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                            }}
+                          >
+                            {product.isOffer ? (
+                              <span>
+                                <strong style={{ color: '#e11d48' }}>₹{product.offerPrice}</strong>{' '}
+                                <small style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.65rem' }}>₹{product.price}</small>
+                              </span>
+                            ) : (
+                              <strong style={{ color: '#e11d48' }}>₹{product.price}</strong>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Product Detail Text */}
+                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                          <span style={{ fontSize: '0.65rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>
+                            {product.category}
+                          </span>
+                          <h4 className="product-card-title" style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginBottom: '0.3rem', fontWeight: 700, lineHeight: 1.25, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {product.title}
+                          </h4>
+                          <p className="product-card-desc" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '0.75rem', flex: 1, lineHeight: 1.4 }}>
+                            {product.description}
+                          </p>
+
+                          <div style={{ display: 'flex', gap: '0.35rem', marginTop: 'auto' }}>
+                            <Link to={`/product/${product._id}`} className="btn btn-secondary" style={{ flex: 1, padding: '0.4rem 0.2rem', fontSize: '0.75rem', justifyContent: 'center' }}>
+                              <Eye size={14} />
+                              <span style={{ display: 'inline-block' }}>Details</span>
+                            </Link>
+                            <button
+                              onClick={() => addToCart(product, 1)}
+                              disabled={product.countInStock <= 0}
+                              className="btn btn-primary"
+                              style={{ flex: 1, padding: '0.4rem 0.2rem', fontSize: '0.75rem', justifyContent: 'center' }}
+                            >
+                              <ShoppingBag size={14} />
+                              <span>{product.countInStock > 0 ? 'Buy' : 'Out'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
