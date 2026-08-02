@@ -270,25 +270,73 @@ button, input, select, textarea {
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .checkout-grid,
-  .order-details-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+/* Cross-Platform Device Responsiveness Rules */
+
+/* 1. Large Desktops & PC Monitors */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1400px;
+  }
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
   }
 }
 
+/* 2. Standard Laptops */
+@media (max-width: 1280px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* 3. Tablets (Landscape & Portrait) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  button, input, select {
+    min-height: 42px;
+  }
+}
+
+/* 4. Mobile Phones & Small Tablets */
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
   }
   .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
+  }
+  .checkout-grid,
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   .nav-user-name {
     display: none;
   }
+  button, input, select {
+    min-height: 44px; /* Touchscreen tap area */
+  }
 }
+
+/* 5. Small Mobile Smartphones */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.85rem !important;
+  }
+  .grid-responsive {
+    grid-template-columns: 1fr;
+  }
+  .glass-card {
+    padding: 1.25rem !important;
+  }
+}
+
 
 
