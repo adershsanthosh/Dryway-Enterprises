@@ -7,12 +7,39 @@ import { initialProducts } from '../data/products.js';
 const router = express.Router();
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
-// Helper to attach fallback IDs to static dataset
+// Helper to attach fallback IDs and sample reviews/Q&A to static dataset
 let dynamicProducts = initialProducts.map((p, idx) => ({
   _id: `dryway-${idx + 101}`,
   offerPrice: p.offerPrice || Math.round(p.price * 0.85),
   isOffer: p.isOffer || (idx % 3 === 0),
   offerTag: p.offerTag || (idx % 3 === 0 ? '15% OFF' : ''),
+  reviews: [
+    {
+      _id: `rev-101-${idx}`,
+      name: 'Anjali R.',
+      rating: 5,
+      comment: 'Super crisp, full of natural taste and no artificial sugar! Reordering again.',
+      createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    },
+    {
+      _id: `rev-102-${idx}`,
+      name: 'Kiran Kumar',
+      rating: 4,
+      comment: 'Extremely fresh packaging and very convenient for quick healthy snacking.',
+      createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
+    },
+  ],
+  questions: [
+    {
+      _id: `q-101-${idx}`,
+      name: 'Siddharth M.',
+      question: 'Is this 100% natural without added preservatives?',
+      answer: 'Yes! All Dryway products are 100% natural, dehydrated without artificial chemicals or preservatives.',
+      createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+    },
+  ],
+  rating: 4.8,
+  numReviews: 2,
   ...p,
 }));
 
@@ -188,6 +215,69 @@ router.delete('/:id', protect, admin, async (req, res) => {
       return res.json({ message: 'Product removed' });
     }
     return res.status(404).json({ message: 'Product not found' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Create new product review
+// @route   POST /api/products/:id/reviews
+// @access  Private
+router.post('/:id/reviews', protect, async (req, res) => {
+  const { rating, comment } = req.body;
+
+  try {
+    const product = dynamicProducts.find((p) => p._id === req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const review = {
+      _id: `rev_${Date.now()}`,
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (!product.reviews) product.reviews = [];
+    product.reviews.unshift(review);
+    product.numReviews = product.reviews.length;
+    product.rating = (
+      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+      product.reviews.length
+    ).toFixed(1);
+
+    return res.status(201).json({ message: 'Review added successfully', product });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Create new product question
+// @route   POST /api/products/:id/questions
+// @access  Public
+router.post('/:id/questions', async (req, res) => {
+  const { name, question } = req.body;
+
+  try {
+    const product = dynamicProducts.find((p) => p._id === req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const qItem = {
+      _id: `q_${Date.now()}`,
+      name: name || 'Customer',
+      question,
+      answer: 'Thank you for your question! Dryway support will update this answer shortly.',
+      createdAt: new Date().toISOString(),
+    };
+
+    if (!product.questions) product.questions = [];
+    product.questions.unshift(qItem);
+
+    return res.status(201).json({ message: 'Question submitted successfully', product });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
+import { WishlistContext } from '../context/WishlistContext';
+import { LanguageContext } from '../context/LanguageContext';
 import { API_BASE_URL } from '../config';
 import { 
   ShoppingBag, 
@@ -15,7 +17,8 @@ import {
   ExternalLink,
   Award,
   Clock,
-  Leaf
+  Leaf,
+  Heart
 } from 'lucide-react';
 
 const Home = () => {
@@ -24,7 +27,10 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+
   const { addToCart } = useContext(CartContext);
+  const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+  const { t } = useContext(LanguageContext);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -456,11 +462,32 @@ const Home = () => {
                     alt={product.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
-                  {product.isOffer && (
-                    <span style={{ position: 'absolute', top: '10px', left: '10px', background: '#d91d49', color: '#fff', fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase' }}>
-                      {product.offerTag || 'OFFER'}
-                    </span>
-                  )}
+                  {/* Wishlist Toggle Heart Button */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleWishlist(product);
+                    }}
+                    title={isInWishlist(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      zIndex: 5,
+                      background: 'rgba(0, 0, 0, 0.65)',
+                      border: '1px solid var(--border-color)',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      color: isInWishlist(product._id) ? '#ef4444' : '#fff',
+                    }}
+                  >
+                    <Heart size={16} fill={isInWishlist(product._id) ? '#ef4444' : 'none'} />
+                  </button>
                   <div
                     style={{
                       position: 'absolute',
