@@ -55,7 +55,7 @@ const MyOrders = () => {
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Account History
           </span>
-          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginTop: '0.2rem' }}>
+          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
             {t('myOrders')}
           </h1>
         </div>
@@ -90,7 +90,7 @@ const MyOrders = () => {
           }}
         >
           <Package size={48} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
             No Orders Placed Yet
           </h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
@@ -120,7 +120,7 @@ const MyOrders = () => {
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                     Order Date: {new Date(order.createdAt).toLocaleDateString()}
                   </span>
-                  <p style={{ fontWeight: 700, fontSize: '1rem', color: '#fff', marginTop: '0.1rem' }}>
+                  <p style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', marginTop: '0.1rem' }}>
                     ID: <code>{order._id}</code>
                   </p>
                 </div>
@@ -147,8 +147,8 @@ const MyOrders = () => {
                       fontSize: '0.8rem',
                       fontWeight: 600,
                       background: order.isDelivered ? 'rgba(16, 185, 129, 0.12)' : 'rgba(234, 179, 8, 0.12)',
-                      color: order.isDelivered ? 'var(--success)' : '#facc15',
-                      border: order.isDelivered ? '1px solid var(--success)' : '1px solid rgba(234, 179, 8, 0.3)',
+                      color: order.isDelivered ? 'var(--success)' : '#d97706',
+                      border: order.isDelivered ? '1px solid var(--success)' : '1px solid #fde68a',
                     }}
                   >
                     {order.isDelivered ? 'Delivered' : 'Processing'}
@@ -165,7 +165,7 @@ const MyOrders = () => {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.6rem',
-                      background: 'var(--bg-primary)',
+                      background: 'var(--bg-tertiary)',
                       padding: '0.5rem 0.8rem',
                       borderRadius: 'var(--radius-sm)',
                       border: '1px solid var(--border-color)',
@@ -178,7 +178,7 @@ const MyOrders = () => {
                       style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px' }}
                     />
                     <div>
-                      <p style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff' }}>{item.title}</p>
+                      <p style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{item.title}</p>
                       <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Qty: {item.qty} × ₹{item.price}</p>
                     </div>
                   </div>

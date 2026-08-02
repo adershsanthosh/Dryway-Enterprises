@@ -154,7 +154,7 @@ const OrderDetails = () => {
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Order ID: <code>{order._id}</code>
           </span>
-          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginTop: '0.2rem' }}>
+          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
             Order Details
           </h1>
         </div>
@@ -168,7 +168,7 @@ const OrderDetails = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Shipping Address details */}
           <div className="glass-card" style={{ padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1rem', color: '#fff' }}>
+            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1rem', color: 'var(--text-primary)' }}>
               Shipping Target
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
@@ -177,7 +177,7 @@ const OrderDetails = () => {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1rem' }}>
               <strong>Email:</strong> {order.user?.email}
             </p>
-            <div style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+            <div style={{ background: 'var(--bg-tertiary)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 {order.shippingAddress.address}
               </p>
@@ -214,7 +214,7 @@ const OrderDetails = () => {
 
           {/* Payment Status details */}
           <div className="glass-card" style={{ padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1rem', color: '#fff' }}>
+            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1rem', color: 'var(--text-primary)' }}>
               Payment Method
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1rem' }}>
@@ -249,8 +249,8 @@ const OrderDetails = () => {
 
         {/* Right: Items Checklist & Admin actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div className="glass-card" style={{ padding: '2rem', background: 'var(--bg-secondary)' }}>
-            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1.5rem', color: '#fff' }}>
+          <div className="glass-card" style={{ padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-headings)', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
               Selected Products
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -263,7 +263,7 @@ const OrderDetails = () => {
                       style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }}
                     />
                     <div>
-                      <p style={{ fontWeight: 600, fontSize: '0.9rem', color: '#fff' }}>{item.title}</p>
+                      <p style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{item.title}</p>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Qty: {item.qty} × ₹{item.price}</p>
                     </div>
                   </div>

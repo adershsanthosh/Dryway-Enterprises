@@ -37,7 +37,7 @@ const Profile = () => {
         <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           Customer Dashboard
         </span>
-        <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginTop: '0.2rem' }}>
+        <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
           {t('myProfile')}
         </h1>
       </div>
@@ -65,7 +65,7 @@ const Profile = () => {
       <div className="checkout-grid">
         {/* Left: Settings Form */}
         <form onSubmit={handleSubmit} className="glass-card" style={{ padding: '2.5rem' }}>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', marginBottom: '1.5rem', color: '#fff' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
             Personal Information
           </h3>
 
@@ -129,18 +129,19 @@ const Profile = () => {
             className="glass-card"
             style={{
               padding: '2.5rem',
-              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(19, 24, 34, 0.95) 100%)',
-              border: '1px solid rgba(234, 179, 8, 0.3)',
+              background: 'var(--bg-secondary)',
+              border: '1px solid #fde68a',
+              boxShadow: '0 4px 20px rgba(234, 179, 8, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#facc15', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#d97706', marginBottom: '1rem' }}>
               <Award size={28} />
-              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
+              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)' }}>
                 Loyalty Points Balance
               </h3>
             </div>
 
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#facc15', marginBottom: '0.5rem' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#d97706', marginBottom: '0.5rem' }}>
               {userInfo.loyaltyPoints || 0} <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Points</span>
             </div>
 

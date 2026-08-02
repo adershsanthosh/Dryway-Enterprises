@@ -122,7 +122,7 @@ const Checkout = () => {
           fontSize: '2.5rem',
           fontFamily: 'var(--font-headings)',
           marginBottom: '2rem',
-          color: '#fff',
+          color: 'var(--text-primary)',
         }}
       >
         Shipping & Checkout
@@ -227,12 +227,12 @@ const Checkout = () => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#facc15', fontWeight: 700, fontSize: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#d97706', fontWeight: 700, fontSize: '1rem' }}>
                 <Award size={20} />
                 <span>Loyalty Points Savings</span>
               </div>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                Balance: <strong style={{ color: '#fff' }}>{availablePoints} Pts</strong>
+                Balance: <strong style={{ color: 'var(--text-primary)' }}>{availablePoints} Pts</strong>
               </span>
             </div>
 
@@ -362,7 +362,7 @@ const Checkout = () => {
                     style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }}
                   />
                   <div>
-                    <p style={{ fontWeight: 600, color: '#fff' }}>{item.title}</p>
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{item.title}</p>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Qty: {item.qty}</p>
                   </div>
                 </div>
@@ -408,7 +408,7 @@ const Checkout = () => {
                 justifyContent: 'space-between',
                 fontSize: '1.2rem',
                 fontWeight: 700,
-                color: '#fff',
+                color: 'var(--text-primary)',
                 marginTop: '0.5rem',
                 borderTop: '1px solid var(--border-color)',
                 paddingTop: '0.75rem',

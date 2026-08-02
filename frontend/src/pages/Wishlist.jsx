@@ -17,7 +17,7 @@ const Wishlist = () => {
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Saved Favorites
           </span>
-          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginTop: '0.2rem' }}>
+          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
             {t('wishlist')} ({wishlistItems.length})
           </h1>
         </div>
@@ -43,7 +43,7 @@ const Wishlist = () => {
           }}
         >
           <Heart size={48} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
             Your Wishlist is Empty
           </h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem' }}>
@@ -104,12 +104,12 @@ const Wishlist = () => {
                   {product.category}
                 </span>
 
-                <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '0.5rem', fontWeight: 600 }}>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 600 }}>
                   {product.title}
                 </h3>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     ₹{product.offerPrice || product.price}
                   </span>
                   {product.isOffer && (

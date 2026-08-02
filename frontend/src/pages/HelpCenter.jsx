@@ -47,7 +47,7 @@ const HelpCenter = () => {
     <div className="container animate-fade-in" style={{ padding: '3rem 1rem' }}>
       <div style={{ textAlignment: 'center', marginBottom: '3rem', textAlign: 'center' }}>
         <HelpCircle size={44} style={{ color: 'var(--accent)', marginBottom: '0.8rem' }} />
-        <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
+        <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)' }}>
           {t('helpCenter')}
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0.5rem auto 0' }}>
@@ -58,7 +58,7 @@ const HelpCenter = () => {
       <div className="checkout-grid">
         {/* Left: FAQs Accordion */}
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '1.5rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
             {t('faqs')}
           </h3>
 
@@ -67,7 +67,7 @@ const HelpCenter = () => {
               <div
                 key={index}
                 style={{
-                  background: 'var(--bg-primary)',
+                  background: 'var(--bg-tertiary)',
                   borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-color)',
                   overflow: 'hidden',
@@ -81,7 +81,7 @@ const HelpCenter = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontWeight: 600,
                     fontSize: '0.95rem',
                     textAlign: 'left',
@@ -103,7 +103,7 @@ const HelpCenter = () => {
                       color: 'var(--text-secondary)',
                       fontSize: '0.9rem',
                       lineHeight: 1.6,
-                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      borderTop: '1px solid var(--border-color)',
                       paddingTop: '0.75rem',
                     }}
                   >
@@ -116,8 +116,8 @@ const HelpCenter = () => {
         </div>
 
         {/* Right: Contact Form */}
-        <div className="glass-card" style={{ padding: '2rem', background: 'var(--bg-secondary)' }}>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '0.5rem' }}>
+        <div className="glass-card" style={{ padding: '2rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
             {t('contactSupport')}
           </h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>

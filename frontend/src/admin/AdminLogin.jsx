@@ -80,7 +80,7 @@ const AdminLogin = () => {
           >
             <ShieldCheck size={30} />
           </div>
-          <h2 style={{ fontSize: '2rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '0.4rem' }}>
+          <h2 style={{ fontSize: '2rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
             Dryway Operations Portal
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -109,7 +109,7 @@ const AdminLogin = () => {
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label" style={{ color: '#fff' }}>Admin / Staff Email</label>
+            <label className="form-label" style={{ color: 'var(--text-primary)' }}>Admin / Staff Email</label>
             <div style={{ position: 'relative' }}>
               <Mail
                 size={18}
@@ -125,7 +125,7 @@ const AdminLogin = () => {
                 type="email"
                 required
                 className="input-field"
-                style={{ paddingLeft: '2.5rem', background: 'rgba(255,255,255,0.05)' }}
+                style={{ paddingLeft: '2.5rem' }}
                 placeholder="admin@dryway.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -134,7 +134,7 @@ const AdminLogin = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label" style={{ color: '#fff' }}>Security Password</label>
+            <label className="form-label" style={{ color: 'var(--text-primary)' }}>Security Password</label>
             <div style={{ position: 'relative' }}>
               <KeyRound
                 size={18}

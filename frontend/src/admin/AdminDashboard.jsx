@@ -405,7 +405,7 @@ const AdminDashboard = () => {
         }}
       >
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             Dryway <span style={{ color: '#d91d49' }}>Operations Dashboard</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
@@ -441,11 +441,11 @@ const AdminDashboard = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ background: currentActiveSession ? '#22c55e' : '#d91d49', color: '#fff', padding: '0.6rem', borderRadius: '8px' }}>
+          <div style={{ background: currentActiveSession ? '#16a34a' : '#e11d48', color: '#ffffff', padding: '0.6rem', borderRadius: '8px' }}>
             <Clock size={20} />
           </div>
           <div>
-            <h4 style={{ color: '#fff', fontSize: '1rem', marginBottom: '0.2rem' }}>
+            <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', marginBottom: '0.2rem' }}>
               Worker Shift Session: {currentActiveSession ? '🟢 Active Shift Clocked-In' : '🔴 Shift Offline'}
             </h4>
             <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
