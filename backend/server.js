@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -48,16 +49,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Dryway MERN API is healthy and active' });
 });
 
-// Serve frontend production build when in production mode
+// Serve frontend production build when in production mode if dist folder exists
 const __dirname = path.resolve();
-if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '../frontend/dist');
+const distPath = path.join(__dirname, '../frontend/dist');
+const indexPath = path.join(distPath, 'index.html');
+
+if (process.env.NODE_ENV === 'production' && fs.existsSync(indexPath)) {
   app.use(express.static(distPath));
   app.get('*', (req, res, next) => {
     if (req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/uploads')) {
       return next();
     }
-    res.sendFile(path.resolve(distPath, 'index.html'));
+    res.sendFile(indexPath);
   });
 } else {
   app.get('/', (req, res) => {
