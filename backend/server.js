@@ -101,9 +101,9 @@ const connectDB = async () => {
 
 // Start Server
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(
-      `Dryway Server initialized on Port ${PORT} (http://localhost:${PORT})`
+      `Dryway Server initialized on Port ${PORT} (http://0.0.0.0:${PORT} / http://localhost:${PORT})`
     );
   });
 });
