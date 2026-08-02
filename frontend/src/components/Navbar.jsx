@@ -62,7 +62,7 @@ const Navbar = ({ onCartOpen }) => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-secondary)' }}>
                 <User size={16} />
-                <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{userInfo.name}</span>
+                <span className="nav-user-name" style={{ fontSize: '0.9rem', fontWeight: 500 }}>{userInfo.name}</span>
               </div>
               <div
                 style={{

@@ -256,6 +256,28 @@ button, input, select, textarea {
   box-shadow: 0 0 16px rgba(234, 179, 8, 0.5);
 }
 
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid,
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
@@ -264,5 +286,9 @@ button, input, select, textarea {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1rem;
   }
+  .nav-user-name {
+    display: none;
+  }
 }
+
 

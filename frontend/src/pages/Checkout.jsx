@@ -144,14 +144,7 @@ const Checkout = () => {
         </div>
       )}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.2fr 1fr',
-          gap: '3rem',
-          alignItems: 'start',
-        }}
-      >
+      <div className="checkout-grid">
         {/* Left: Shipping Form */}
         <form onSubmit={handleSubmit} className="glass-card" style={{ padding: '2.5rem' }}>
           <h3

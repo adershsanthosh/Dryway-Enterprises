@@ -163,7 +163,7 @@ const OrderDetails = () => {
         </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '3rem', alignItems: 'start' }}>
+      <div className="order-details-grid">
         {/* Left: Shipping & Billing summaries */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Shipping Address details */}
