@@ -6,6 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
+import SplashIntro from './components/SplashIntro';
 
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
@@ -28,6 +29,7 @@ function App() {
     <ThemeProvider>
       <LanguageProvider>
         <WishlistProvider>
+          <SplashIntro />
           <Router>
             <div
               style={{
