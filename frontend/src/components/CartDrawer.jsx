@@ -92,7 +92,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   />
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#fff', marginBottom: '0.2rem' }}>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
                         {item.title}
                       </h4>
                       <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600 }}>
@@ -116,15 +116,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         <button
                           disabled={item.qty <= 1}
                           onClick={() => updateCartQty(item.product, item.qty - 1)}
-                          style={{ cursor: 'pointer', color: item.qty <= 1 ? 'var(--text-muted)' : '#fff' }}
+                          style={{ cursor: 'pointer', color: item.qty <= 1 ? 'var(--text-muted)' : 'var(--text-primary)' }}
                         >
                           <Minus size={14} />
                         </button>
-                        <span style={{ fontSize: '0.9rem', width: '20px', textAlign: 'center' }}>{item.qty}</span>
+                        <span style={{ fontSize: '0.9rem', width: '20px', textAlign: 'center', color: 'var(--text-primary)' }}>{item.qty}</span>
                         <button
                           disabled={item.qty >= item.countInStock}
                           onClick={() => updateCartQty(item.product, item.qty + 1)}
-                          style={{ cursor: 'pointer', color: item.qty >= item.countInStock ? 'var(--text-muted)' : '#fff' }}
+                          style={{ cursor: 'pointer', color: item.qty >= item.countInStock ? 'var(--text-muted)' : 'var(--text-primary)' }}
                         >
                           <Plus size={14} />
                         </button>

@@ -7,10 +7,11 @@ const Footer = () => {
       style={{
         borderTop: '1px solid var(--border-color)',
         padding: '4rem 0 2rem 0',
-        backgroundColor: '#0c1017',
+        backgroundColor: 'var(--bg-secondary)',
         marginTop: '6rem',
         color: 'var(--text-secondary)',
         fontSize: '0.9rem',
+        transition: 'background 0.3s ease',
       }}
     >
       <div
@@ -25,7 +26,7 @@ const Footer = () => {
         <div>
           <h4
             style={{
-              color: '#fff',
+              color: 'var(--text-primary)',
               fontSize: '1.4rem',
               fontWeight: 800,
               fontFamily: 'var(--font-headings)',
@@ -40,13 +41,13 @@ const Footer = () => {
           <p style={{ fontSize: '0.85rem', lineHeight: '1.6', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
             The Dry Way – Delicious & Yummy 100% pure natural dehydrated fruits, kitchen masalas & powders, ready-to-cook meal kits, superfood wellness powders, and handcrafted chocolates.
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#22c55e', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#16a34a', fontSize: '0.8rem', fontWeight: 600 }}>
             <Leaf size={14} /> 100% Preservative Free & Chemical Free
           </div>
         </div>
 
         <div>
-          <h5 style={{ color: '#fff', fontWeight: 700, marginBottom: '1rem', fontSize: '0.95rem' }}>
+          <h5 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: '1rem', fontSize: '0.95rem' }}>
             Product Ranges
           </h5>
           <ul
@@ -67,7 +68,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h5 style={{ color: '#fff', fontWeight: 700, marginBottom: '1rem', fontSize: '0.95rem' }}>
+          <h5 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: '1rem', fontSize: '0.95rem' }}>
             Official Brand & Support
           </h5>
           <ul
