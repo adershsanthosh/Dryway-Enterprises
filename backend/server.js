@@ -83,9 +83,13 @@ const PORT = process.env.PORT || 5001;
 
 // Resilient MongoDB connection handler
 const connectDB = async () => {
+  const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/dryway';
+  if (!process.env.MONGO_URI) {
+    console.log('No MONGO_URI defined in environment. Running Express in Resilient Offline Mode with sample data.');
+    return;
+  }
   try {
-    const mongoUri = process.env.MONGO_URI;
-    const conn = await mongoose.connect(mongoUri);
+    const conn = await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Database connection issue: ${error.message}`);
