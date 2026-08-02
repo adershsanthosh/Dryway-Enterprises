@@ -148,13 +148,13 @@ const Navbar = ({ onCartOpen }) => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.3rem',
-                  background: 'rgba(234, 179, 8, 0.12)',
-                  color: '#facc15',
+                  background: '#fef3c7',
+                  color: '#d97706',
                   padding: '0.25rem 0.65rem',
                   borderRadius: '12px',
-                  border: '1px solid rgba(234, 179, 8, 0.3)',
+                  border: '1px solid #fde68a',
                   fontSize: '0.8rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   textDecoration: 'none',
                 }}
                 title="Loyalty Points (1 point = ₹1 discount)"

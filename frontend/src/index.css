@@ -1,32 +1,27 @@
 :root {
-  /* Attractive Light Theme Color Palette for Organic Dehydrated Foods */
-  --bg-primary: #f8fafc;        /* Crisp Ivory Slate Background */
-  --bg-secondary: #ffffff;      /* Pure White Surface Cards */
-  --bg-tertiary: #f1f5f9;       /* Soft Elevated Inputs & Accents */
-  --text-primary: #0f172a;      /* High contrast Charcoal Slate */
-  --text-secondary: #334155;    /* Deep Slate Subheadings */
-  --text-muted: #64748b;        /* Muted Body Text */
+  /* Ultra-Clear & Attractive Light Theme Color Palette */
+  --bg-primary: #f8fafc;        /* Soft Ivory Slate Background */
+  --bg-secondary: #ffffff;      /* Pure White Card Surfaces */
+  --bg-tertiary: #f1f5f9;       /* Light Slate Input Background */
+  --text-primary: #0f172a;      /* High-contrast Charcoal Slate */
+  --text-secondary: #334155;    /* Deep Slate Subtitles */
+  --text-muted: #64748b;        /* Muted Gray Text */
   
   /* Brand Accents */
-  --accent: #e11d48;            /* Vibrant Ruby Berry Red */
+  --accent: #e11d48;            /* Vibrant Crimson Berry */
   --accent-hover: #be123c;
   --accent-rgb: 225, 29, 72;
   
   --color-secondary: #0284c7;   /* Ocean Sky Blue */
-  --color-orange: #f97316;      /* Energy Sunset Orange */
-  --color-green: #16a34a;       /* Organic Leaf Green */
+  --color-orange: #ea580c;      /* Sunset Orange */
+  --color-green: #16a34a;       /* Fresh Leaf Green */
   
   --success: #16a34a;           /* Fresh Green */
   --error: #e11d48;             /* Rose Red */
   --info: #0284c7;              /* Sky Blue */
   
-  --border-color: rgba(15, 23, 42, 0.1);
+  --border-color: #e2e8f0;      /* Crisp Light Border */
   --border-focus: rgba(225, 29, 72, 0.4);
-  
-  /* Glassmorphic Cards & Elevated Shadows */
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(15, 23, 42, 0.08);
-  --glass-shadow: rgba(15, 23, 42, 0.08);
   
   /* Border Radius */
   --radius-sm: 10px;
@@ -46,18 +41,23 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
   line-height: 1.6;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headings);
   font-weight: 700;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
 }
 
@@ -69,7 +69,7 @@ a {
 
 button, input, select, textarea {
   font-family: inherit;
-  color: inherit;
+  color: var(--text-primary);
   background: none;
   border: none;
   outline: none;
@@ -84,7 +84,7 @@ button, input, select, textarea {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
+  background: #cbd5e1;
   border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -96,37 +96,29 @@ button, input, select, textarea {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-}
-
-/* Glassmorphism Card Style for Light Mode */
+/* Card Style for Light Mode */
 .glass-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
   border-radius: var(--radius-md);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .glass-card:hover {
   border-color: rgba(225, 29, 72, 0.3);
-  box-shadow: 0 16px 36px -5px rgba(225, 29, 72, 0.12);
+  box-shadow: 0 12px 28px -4px rgba(225, 29, 72, 0.1);
 }
 
 /* Form Controls */
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .form-label {
@@ -149,6 +141,7 @@ button, input, select, textarea {
 .input-field:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15);
+  background: #ffffff;
 }
 
 /* Buttons */
@@ -162,12 +155,12 @@ button, input, select, textarea {
   font-weight: 600;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #e11d48 0%, #f97316 100%);
-  color: #fff;
+  color: #ffffff !important;
   box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
 }
 
@@ -190,118 +183,50 @@ button, input, select, textarea {
 
 .btn-danger {
   background: var(--error);
-  color: #fff;
+  color: #ffffff !important;
 }
 
 .btn-danger:hover {
-  background: #dc2626;
+  background: #be123c;
 }
 
 /* Products Responsive Grid */
 .grid-responsive {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Interactive elements */
-.pulse-glow {
-  box-shadow: 0 0 0 0 rgba(217, 29, 73, 0.7);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 29, 73, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(217, 29, 73, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 29, 73, 0);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-.badge-glow {
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.badge-glow:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 16px rgba(234, 179, 8, 0.5);
-}
-
-.checkout-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 3rem;
-  align-items: start;
-}
-
+.checkout-grid,
 .order-details-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: 3rem;
+  gap: 2.5rem;
   align-items: start;
 }
 
-/* Cross-Platform Device Responsiveness Rules */
-
-/* 1. Large Desktops & PC Monitors */
-@media (min-width: 1440px) {
+/* Cross-Platform Responsiveness Breakpoints */
+@media (min-width: 1280px) {
   .container {
-    max-width: 1400px;
-  }
-  .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    max-width: 1280px;
   }
 }
 
-/* 2. Standard Laptops */
-@media (max-width: 1280px) {
-  .container {
-    max-width: 1140px;
-  }
-}
-
-/* 3. Tablets (Landscape & Portrait) */
 @media (max-width: 1024px) {
   .container {
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
+  }
+  .checkout-grid,
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
   .grid-responsive {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-  button, input, select {
-    min-height: 42px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1.25rem;
   }
 }
 
-/* 4. Mobile Phones & Small Tablets */
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
@@ -310,31 +235,33 @@ button, input, select, textarea {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
   }
-  .checkout-grid,
-  .order-details-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
   .nav-user-name {
     display: none;
   }
   button, input, select {
-    min-height: 44px; /* Touchscreen tap area */
+    min-height: 42px;
   }
 }
 
-/* 5. Small Mobile Smartphones */
 @media (max-width: 480px) {
+  .container {
+    padding: 0 0.85rem;
+  }
   h1 {
-    font-size: 1.85rem !important;
+    font-size: 1.75rem !important;
+  }
+  h2 {
+    font-size: 1.35rem !important;
   }
   .grid-responsive {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   .glass-card {
     padding: 1.25rem !important;
   }
 }
+
 
 
 

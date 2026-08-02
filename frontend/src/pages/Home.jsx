@@ -256,72 +256,76 @@ const Home = () => {
           <div 
             onClick={() => setSelectedCategory('Healthy Snacks & Dry Fruits')}
             style={{ 
-              background: 'rgba(255, 255, 255, 0.03)', 
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-secondary)', 
+              border: '1px solid var(--border-color)',
               padding: '1.25rem',
               borderRadius: '12px',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               transition: 'all 0.3s'
             }}
           >
-            <div style={{ width: '40px', height: '40px', background: 'rgba(217, 29, 73, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#d91d49' }}>
+            <div style={{ width: '40px', height: '40px', background: 'rgba(225, 29, 72, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#e11d48' }}>
               <Flame size={20} />
             </div>
-            <h4 style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Healthy Snacks</h4>
+            <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Healthy Snacks</h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Dehydrated Pineapple, Mango, Strawberry, Kiwi & Dragon Fruit.</p>
           </div>
 
           <div 
             onClick={() => setSelectedCategory('Kitchen Revolution')}
             style={{ 
-              background: 'rgba(255, 255, 255, 0.03)', 
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-secondary)', 
+              border: '1px solid var(--border-color)',
               padding: '1.25rem',
               borderRadius: '12px',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               transition: 'all 0.3s'
             }}
           >
-            <div style={{ width: '40px', height: '40px', background: 'rgba(43, 190, 249, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#2bbef9' }}>
+            <div style={{ width: '40px', height: '40px', background: 'rgba(2, 132, 199, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#0284c7' }}>
               <Utensils size={20} />
             </div>
-            <h4 style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Kitchen Revolution</h4>
+            <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Kitchen Revolution</h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Onion flakes, Chilli flakes, Garam masala, Garlic & Turmeric powder.</p>
           </div>
 
           <div 
             onClick={() => setSelectedCategory('Ready to Cook Kits')}
             style={{ 
-              background: 'rgba(255, 255, 255, 0.03)', 
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-secondary)', 
+              border: '1px solid var(--border-color)',
               padding: '1.25rem',
               borderRadius: '12px',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               transition: 'all 0.3s'
             }}
           >
-            <div style={{ width: '40px', height: '40px', background: 'rgba(34, 197, 94, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#22c55e' }}>
+            <div style={{ width: '40px', height: '40px', background: 'rgba(22, 163, 74, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#16a34a' }}>
               <Clock size={20} />
             </div>
-            <h4 style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Ready to Cook</h4>
+            <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Ready to Cook</h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sambar Kit, Avial Kit, Carrot, Beetroot & Raw Jackfruit Thoran Kits.</p>
           </div>
 
           <div 
             onClick={() => setSelectedCategory('Wellness & Superfoods')}
             style={{ 
-              background: 'rgba(255, 255, 255, 0.03)', 
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-secondary)', 
+              border: '1px solid var(--border-color)',
               padding: '1.25rem',
               borderRadius: '12px',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               transition: 'all 0.3s'
             }}
           >
-            <div style={{ width: '40px', height: '40px', background: 'rgba(217, 29, 73, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#d91d49' }}>
+            <div style={{ width: '40px', height: '40px', background: 'rgba(225, 29, 72, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.8rem', color: '#e11d48' }}>
               <HeartPulse size={20} />
             </div>
-            <h4 style={{ color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Wellness Superfoods</h4>
+            <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Wellness Superfoods</h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ABC mix, Moringa powder, Green Jackfruit flour, Spirulina & Sea Moss.</p>
           </div>
         </div>
@@ -450,8 +454,8 @@ const Home = () => {
                   height: '100%',
                   padding: '1.1rem',
                   borderRadius: '14px',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  background: 'rgba(19, 24, 34, 0.65)',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-secondary)',
                   transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
               >
@@ -474,7 +478,7 @@ const Home = () => {
                       top: '10px',
                       right: '10px',
                       zIndex: 5,
-                      background: 'rgba(0, 0, 0, 0.65)',
+                      background: 'rgba(255, 255, 255, 0.9)',
                       border: '1px solid var(--border-color)',
                       width: '32px',
                       height: '32px',
@@ -483,43 +487,45 @@ const Home = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
-                      color: isInWishlist(product._id) ? '#ef4444' : '#fff',
+                      color: isInWishlist(product._id) ? '#e11d48' : 'var(--text-primary)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                     }}
                   >
-                    <Heart size={16} fill={isInWishlist(product._id) ? '#ef4444' : 'none'} />
+                    <Heart size={16} fill={isInWishlist(product._id) ? '#e11d48' : 'none'} />
                   </button>
                   <div
                     style={{
                       position: 'absolute',
                       top: '10px',
-                      right: '10px',
-                      background: 'rgba(11, 15, 23, 0.88)',
+                      left: '10px',
+                      background: 'rgba(255, 255, 255, 0.92)',
                       backdropFilter: 'blur(6px)',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontWeight: 800,
                       padding: '0.35rem 0.75rem',
                       borderRadius: '6px',
                       fontSize: '0.95rem',
-                      border: '1px solid rgba(217, 29, 73, 0.4)'
+                      border: '1px solid var(--border-color)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
                     }}
                   >
                     {product.isOffer ? (
                       <span>
-                        <strong style={{ color: '#d91d49' }}>₹{product.offerPrice}</strong>{' '}
+                        <strong style={{ color: '#e11d48' }}>₹{product.offerPrice}</strong>{' '}
                         <small style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.75rem' }}>₹{product.price}</small>
                       </span>
                     ) : (
-                      <strong style={{ color: '#d91d49' }}>₹{product.price}</strong>
+                      <strong style={{ color: '#e11d48' }}>₹{product.price}</strong>
                     )}
                   </div>
                 </div>
 
                 {/* Product Detail Text */}
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <span style={{ fontSize: '0.725rem', color: '#2bbef9', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '0.725rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
                     {product.category}
                   </span>
-                  <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '0.5rem', fontWeight: 600, lineHeight: 1.3 }}>
+                  <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 700, lineHeight: 1.3 }}>
                     {product.title}
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '1.25rem', flex: 1, lineHeight: 1.5 }}>

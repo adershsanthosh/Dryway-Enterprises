@@ -226,23 +226,23 @@ const ProductDetails = () => {
             <span style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {product.category}
             </span>
-            <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: '#fff', marginTop: '0.2rem', lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem', lineHeight: 1.2 }}>
               {product.title}
             </h1>
           </div>
 
           {/* Star Rating Overview */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ display: 'flex', color: '#facc15' }}>
+            <div style={{ display: 'flex', color: '#eab308' }}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
                   size={18}
-                  fill={star <= Math.round(product.rating || 4.8) ? '#facc15' : 'none'}
+                  fill={star <= Math.round(product.rating || 4.8) ? '#eab308' : 'none'}
                 />
               ))}
             </div>
-            <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>{product.rating || 4.8}</span>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{product.rating || 4.8}</span>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
               ({product.numReviews || product.reviews?.length || 2} customer reviews)
             </span>
@@ -250,7 +250,7 @@ const ProductDetails = () => {
 
           {/* Price display */}
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginTop: '0.5rem' }}>
-            <span style={{ fontSize: '2.25rem', fontWeight: 800, color: '#fff' }}>
+            <span style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               ₹{product.offerPrice || product.price}
             </span>
             {product.isOffer && (
@@ -346,7 +346,7 @@ const ProductDetails = () => {
       <div className="checkout-grid" style={{ gap: '3rem' }}>
         {/* Customer Reviews */}
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '1.5rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
             {t('customerReviews')}
           </h3>
 
@@ -365,15 +365,15 @@ const ProductDetails = () => {
               </p>
             ) : (
               product.reviews.map((rev) => (
-                <div key={rev._id} style={{ background: 'var(--bg-primary)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                <div key={rev._id} style={{ background: 'var(--bg-tertiary)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <User size={16} style={{ color: 'var(--accent)' }} />
-                      <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{rev.name}</strong>
+                      <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{rev.name}</strong>
                     </div>
-                    <div style={{ display: 'flex', color: '#facc15' }}>
+                    <div style={{ display: 'flex', color: '#eab308' }}>
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} size={14} fill={s <= rev.rating ? '#facc15' : 'none'} />
+                        <Star key={s} size={14} fill={s <= rev.rating ? '#eab308' : 'none'} />
                       ))}
                     </div>
                   </div>
@@ -387,7 +387,7 @@ const ProductDetails = () => {
 
           {/* Write Review Form */}
           <form onSubmit={handleReviewSubmit} style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
-            <h4 style={{ fontSize: '1rem', color: '#fff', marginBottom: '1rem' }}>
+            <h4 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
               {t('writeReview')}
             </h4>
 
@@ -399,9 +399,9 @@ const ProductDetails = () => {
                     type="button"
                     key={star}
                     onClick={() => setUserRating(star)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem', color: '#facc15' }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem', color: '#eab308' }}
                   >
-                    <Star size={22} fill={star <= userRating ? '#facc15' : 'none'} />
+                    <Star size={22} fill={star <= userRating ? '#eab308' : 'none'} />
                   </button>
                 ))}
               </div>
@@ -432,8 +432,8 @@ const ProductDetails = () => {
         </div>
 
         {/* Product Q&A */}
-        <div className="glass-card" style={{ padding: '2rem', background: 'var(--bg-secondary)' }}>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff', marginBottom: '1.5rem' }}>
+        <div className="glass-card" style={{ padding: '2rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginBottom: '1.5rem' }}>
             {t('questionsAnswers')}
           </h3>
 
@@ -452,8 +452,8 @@ const ProductDetails = () => {
               </p>
             ) : (
               product.questions.map((q) => (
-                <div key={q._id} style={{ background: 'var(--bg-primary)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                  <p style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem', marginBottom: '0.3rem' }}>
+                <div key={q._id} style={{ background: 'var(--bg-tertiary)', padding: '1rem 1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+                  <p style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.3rem' }}>
                     Q: {q.question}
                   </p>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', paddingLeft: '0.8rem', borderLeft: '2px solid var(--accent)' }}>
@@ -466,7 +466,7 @@ const ProductDetails = () => {
 
           {/* Ask Question Form */}
           <form onSubmit={handleQuestionSubmit} style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
-            <h4 style={{ fontSize: '1rem', color: '#fff', marginBottom: '1rem' }}>
+            <h4 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
               {t('askQuestion')}
             </h4>
 
