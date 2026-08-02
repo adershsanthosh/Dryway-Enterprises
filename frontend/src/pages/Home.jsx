@@ -443,7 +443,7 @@ const Home = () => {
           </div>
         ) : (
           /* Products Grid */
-          <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: '1.75rem' }}>
+          <div className="grid-responsive">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
@@ -460,7 +460,7 @@ const Home = () => {
                 }}
               >
                 {/* Product Image Panel */}
-                <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '10px', height: '200px', marginBottom: '1rem' }}>
+                <div className="product-image-container" style={{ position: 'relative', overflow: 'hidden', borderRadius: '10px', marginBottom: '0.85rem' }}>
                   <img
                     src={product.images[0]}
                     alt={product.title}
@@ -502,9 +502,9 @@ const Home = () => {
                       backdropFilter: 'blur(6px)',
                       color: 'var(--text-primary)',
                       fontWeight: 800,
-                      padding: '0.35rem 0.75rem',
+                      padding: '0.3rem 0.65rem',
                       borderRadius: '6px',
-                      fontSize: '0.95rem',
+                      fontSize: '0.85rem',
                       border: '1px solid var(--border-color)',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
                     }}
@@ -512,7 +512,7 @@ const Home = () => {
                     {product.isOffer ? (
                       <span>
                         <strong style={{ color: '#e11d48' }}>₹{product.offerPrice}</strong>{' '}
-                        <small style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.75rem' }}>₹{product.price}</small>
+                        <small style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.7rem' }}>₹{product.price}</small>
                       </span>
                     ) : (
                       <strong style={{ color: '#e11d48' }}>₹{product.price}</strong>
@@ -522,13 +522,13 @@ const Home = () => {
 
                 {/* Product Detail Text */}
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <span style={{ fontSize: '0.725rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem' }}>
                     {product.category}
                   </span>
-                  <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 700, lineHeight: 1.3 }}>
+                  <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '0.4rem', fontWeight: 700, lineHeight: 1.25 }}>
                     {product.title}
                   </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '1.25rem', flex: 1, lineHeight: 1.5 }}>
+                  <p className="product-card-desc" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '1rem', flex: 1, lineHeight: 1.4 }}>
                     {product.description}
                   </p>
 

@@ -7,6 +7,10 @@
   --text-secondary: #334155;    /* Deep Slate Subtitles */
   --text-muted: #64748b;        /* Muted Gray Text */
   
+  /* Adaptive Product Card Sizing Variables */
+  --product-img-height: 180px;
+  --product-card-padding: 1rem;
+  
   /* Brand Accents */
   --accent: #e11d48;            /* Vibrant Crimson Berry */
   --accent-hover: #be123c;
