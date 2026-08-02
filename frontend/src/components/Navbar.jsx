@@ -39,13 +39,13 @@ const Navbar = ({ onCartOpen }) => {
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.65rem', fontWeight: 900, fontFamily: 'var(--font-headings)', letterSpacing: '0.02em', color: 'var(--text-primary)' }}>
+          <span className="nav-logo-text" style={{ fontSize: '1.65rem', fontWeight: 900, fontFamily: 'var(--font-headings)', letterSpacing: '0.02em', color: 'var(--text-primary)' }}>
             THE DRY <span style={{ background: 'linear-gradient(135deg, #f97316 0%, #e11d48 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>WAY</span>
           </span>
         </Link>
 
         {/* Navigation Items */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <div className="nav-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <Link to="/" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }} className="nav-link">
             {t('shopCatalog')}
           </Link>

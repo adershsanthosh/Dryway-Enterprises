@@ -346,7 +346,7 @@ const Home = () => {
           }}
         >
           <div>
-            <h2 style={{ fontSize: '2rem', fontFamily: 'var(--font-headings)', marginBottom: '0.4rem', color: '#fff' }}>
+            <h2 style={{ fontSize: '1.85rem', fontFamily: 'var(--font-headings)', marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
               The Dry Way Catalog ({filteredProducts.length} Items)
             </h2>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
@@ -354,9 +354,9 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', width: '100%', maxWidth: '320px' }}>
             {/* Search Input */}
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <Search
                 size={18}
                 style={{
@@ -371,7 +371,7 @@ const Home = () => {
                 type="text"
                 placeholder="Search fruits, masalas, kits..."
                 className="input-field"
-                style={{ width: '280px', paddingLeft: '2.5rem', height: '42px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}
+                style={{ width: '100%', paddingLeft: '2.5rem', height: '40px', borderRadius: '8px' }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -380,32 +380,23 @@ const Home = () => {
         </div>
 
         {/* Category Pills Navigation */}
-        <div 
-          style={{ 
-            display: 'flex', 
-            gap: '0.6rem', 
-            overflowX: 'auto', 
-            paddingBottom: '1rem', 
-            marginBottom: '2.5rem',
-            scrollbarWidth: 'thin'
-          }}
-        >
+        <div className="category-scroll-container" style={{ marginBottom: '2rem' }}>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               style={{
-                padding: '0.65rem 1.2rem',
-                fontSize: '0.85rem',
+                padding: '0.55rem 1.1rem',
+                fontSize: '0.825rem',
                 fontWeight: 600,
                 borderRadius: '8px',
                 whiteSpace: 'nowrap',
-                background: selectedCategory === cat ? '#d91d49' : 'rgba(255, 255, 255, 0.05)',
-                color: selectedCategory === cat ? '#fff' : 'var(--text-primary)',
-                border: selectedCategory === cat ? '1px solid #d91d49' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: selectedCategory === cat ? 'var(--accent)' : 'var(--bg-tertiary)',
+                color: selectedCategory === cat ? '#ffffff' : 'var(--text-primary)',
+                border: selectedCategory === cat ? '1px solid var(--accent)' : '1px solid var(--border-color)',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                boxShadow: selectedCategory === cat ? '0 4px 14px rgba(217, 29, 73, 0.4)' : 'none'
+                boxShadow: selectedCategory === cat ? '0 4px 14px rgba(225, 29, 72, 0.3)' : 'none'
               }}
             >
               {cat}
