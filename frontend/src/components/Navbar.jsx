@@ -26,32 +26,33 @@ const Navbar = ({ onCartOpen }) => {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(11, 15, 23, 0.8)',
+        background: 'rgba(255, 255, 255, 0.92)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border-color)',
+        boxShadow: '0 4px 20px -5px rgba(15, 23, 42, 0.05)',
         padding: '1rem 0',
       }}
     >
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.65rem', fontWeight: 900, fontFamily: 'var(--font-headings)', letterSpacing: '0.02em', color: '#fff' }}>
-            THE DRY <span style={{ background: 'linear-gradient(135deg, #f97316 0%, #d91d49 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>WAY</span>
+          <span style={{ fontSize: '1.65rem', fontWeight: 900, fontFamily: 'var(--font-headings)', letterSpacing: '0.02em', color: 'var(--text-primary)' }}>
+            THE DRY <span style={{ background: 'linear-gradient(135deg, #f97316 0%, #e11d48 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>WAY</span>
           </span>
         </Link>
 
         {/* Navigation Items */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <Link to="/" style={{ fontWeight: 500, fontSize: '0.9rem' }} className="nav-link">
+          <Link to="/" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }} className="nav-link">
             {t('shopCatalog')}
           </Link>
 
-          <Link to="/help" style={{ fontWeight: 500, fontSize: '0.9rem', color: 'var(--text-secondary)' }} className="nav-link">
+          <Link to="/help" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-secondary)' }} className="nav-link">
             {t('helpCenter')}
           </Link>
 
           {userInfo && (userInfo.isAdmin || userInfo.isWorker) ? (
-            <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#d91d49', fontWeight: 700, fontSize: '0.85rem', background: 'rgba(217, 29, 73, 0.1)', padding: '0.3rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(217, 29, 73, 0.3)' }}>
+            <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#e11d48', fontWeight: 700, fontSize: '0.85rem', background: 'rgba(225, 29, 72, 0.08)', padding: '0.3rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(225, 29, 72, 0.2)' }}>
               <ShieldAlert size={14} />
               {t('adminPortal')}
             </Link>
@@ -66,7 +67,7 @@ const Navbar = ({ onCartOpen }) => {
         {/* Action Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           {/* Multi-Language Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'rgba(255, 255, 255, 0.05)', padding: '0.2rem 0.5rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-tertiary)', padding: '0.25rem 0.6rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <Globe size={14} style={{ color: 'var(--text-muted)' }} />
             <select
               value={lang}
@@ -74,17 +75,17 @@ const Navbar = ({ onCartOpen }) => {
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 outline: 'none',
               }}
             >
-              <option value="en" style={{ background: '#0b0f17' }}>English</option>
-              <option value="hi" style={{ background: '#0b0f17' }}>हिंदी (Hindi)</option>
-              <option value="ml" style={{ background: '#0b0f17' }}>മലയാളം (Malayalam)</option>
-              <option value="ta" style={{ background: '#0b0f17' }}>தமிழ் (Tamil)</option>
+              <option value="en" style={{ background: '#ffffff', color: '#0f172a' }}>English</option>
+              <option value="hi" style={{ background: '#ffffff', color: '#0f172a' }}>हिंदी (Hindi)</option>
+              <option value="ml" style={{ background: '#ffffff', color: '#0f172a' }}>മലയാളം (Malayalam)</option>
+              <option value="ta" style={{ background: '#ffffff', color: '#0f172a' }}>தமிழ் (Tamil)</option>
             </select>
           </div>
 
@@ -98,19 +99,19 @@ const Navbar = ({ onCartOpen }) => {
               alignItems: 'center',
               padding: '0.5rem',
               borderRadius: 'var(--radius-sm)',
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: 'var(--bg-tertiary)',
               border: '1px solid var(--border-color)',
-              color: '#fff',
+              color: 'var(--text-primary)',
             }}
           >
-            <Heart size={18} style={{ color: wishlistItems.length > 0 ? '#ef4444' : '#fff' }} fill={wishlistItems.length > 0 ? '#ef4444' : 'none'} />
+            <Heart size={18} style={{ color: wishlistItems.length > 0 ? '#e11d48' : 'var(--text-primary)' }} fill={wishlistItems.length > 0 ? '#e11d48' : 'none'} />
             {wishlistItems.length > 0 && (
               <span
                 style={{
                   position: 'absolute',
                   top: '-5px',
                   right: '-5px',
-                  background: '#ef4444',
+                  background: '#e11d48',
                   color: '#fff',
                   fontSize: '0.7rem',
                   fontWeight: '700',
@@ -131,7 +132,7 @@ const Navbar = ({ onCartOpen }) => {
           {userInfo ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               {/* Account Dropdown Links */}
-              <Link to="/profile" title="Account Settings" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#fff', fontSize: '0.85rem', fontWeight: 500 }}>
+              <Link to="/profile" title="Account Settings" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600 }}>
                 <User size={15} style={{ color: 'var(--accent)' }} />
                 <span className="nav-user-name">{userInfo.name}</span>
               </Link>
@@ -196,11 +197,11 @@ const Navbar = ({ onCartOpen }) => {
               alignItems: 'center',
               padding: '0.5rem',
               borderRadius: 'var(--radius-sm)',
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: 'var(--bg-tertiary)',
               border: '1px solid var(--border-color)',
             }}
           >
-            <ShoppingBag size={18} style={{ color: '#fff' }} />
+            <ShoppingBag size={18} style={{ color: 'var(--text-primary)' }} />
             {totalQty > 0 && (
               <span
                 style={{
@@ -208,7 +209,7 @@ const Navbar = ({ onCartOpen }) => {
                   top: '-5px',
                   right: '-5px',
                   background: 'var(--accent)',
-                  color: '#000',
+                  color: '#fff',
                   fontSize: '0.7rem',
                   fontWeight: '700',
                   width: '16px',

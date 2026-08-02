@@ -1,41 +1,41 @@
 :root {
-  /* Color Palette matching thedryway.com official brand theme */
-  --bg-primary: #0b0e14;
-  --bg-secondary: #131822;
-  --bg-tertiary: #1c2333;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  /* Attractive Light Theme Color Palette for Organic Dehydrated Foods */
+  --bg-primary: #f8fafc;        /* Crisp Ivory Slate Background */
+  --bg-secondary: #ffffff;      /* Pure White Surface Cards */
+  --bg-tertiary: #f1f5f9;       /* Soft Elevated Inputs & Accents */
+  --text-primary: #0f172a;      /* High contrast Charcoal Slate */
+  --text-secondary: #334155;    /* Deep Slate Subheadings */
+  --text-muted: #64748b;        /* Muted Body Text */
   
-  /* Brand Theme Colors from thedryway.com */
-  --accent: #d91d49;         /* Dryway Primary Crimson Berry Red */
-  --accent-hover: #b5153b;
-  --accent-rgb: 217, 29, 73;
+  /* Brand Accents */
+  --accent: #e11d48;            /* Vibrant Ruby Berry Red */
+  --accent-hover: #be123c;
+  --accent-rgb: 225, 29, 72;
   
-  --color-secondary: #2bbef9; /* Dryway Sky Blue Category Highlight */
-  --color-orange: #ea2b0f;    /* Dryway Energy Orange */
-  --color-green: #22c55e;     /* Natural Leaf Green */
+  --color-secondary: #0284c7;   /* Ocean Sky Blue */
+  --color-orange: #f97316;      /* Energy Sunset Orange */
+  --color-green: #16a34a;       /* Organic Leaf Green */
   
-  --success: #22c55e;        /* Emerald */
-  --error: #ef4444;          /* Rose */
-  --info: #2bbef9;           /* Sky Blue */
+  --success: #16a34a;           /* Fresh Green */
+  --error: #e11d48;             /* Rose Red */
+  --info: #0284c7;              /* Sky Blue */
   
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(217, 29, 73, 0.5);
+  --border-color: rgba(15, 23, 42, 0.1);
+  --border-focus: rgba(225, 29, 72, 0.4);
   
-  /* Glassmorphism */
-  --glass-bg: rgba(19, 24, 34, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: rgba(0, 0, 0, 0.45);
+  /* Glassmorphic Cards & Elevated Shadows */
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-shadow: rgba(15, 23, 42, 0.08);
   
   /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
   
   /* Fonts */
-  --font-headings: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-headings: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -105,13 +105,11 @@ button, input, select, textarea {
   }
 }
 
-/* Glassmorphism Card Style */
+/* Glassmorphism Card Style for Light Mode */
 .glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 var(--glass-shadow);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
   border-radius: var(--radius-md);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
               box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
@@ -119,8 +117,8 @@ button, input, select, textarea {
 }
 
 .glass-card:hover {
-  border-color: rgba(217, 29, 73, 0.4);
-  box-shadow: 0 12px 40px 0 rgba(217, 29, 73, 0.15);
+  border-color: rgba(225, 29, 72, 0.3);
+  box-shadow: 0 16px 36px -5px rgba(225, 29, 72, 0.12);
 }
 
 /* Form Controls */
@@ -133,7 +131,7 @@ button, input, select, textarea {
 
 .form-label {
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
@@ -150,7 +148,7 @@ button, input, select, textarea {
 
 .input-field:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(217, 29, 73, 0.2);
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15);
 }
 
 /* Buttons */
@@ -168,15 +166,15 @@ button, input, select, textarea {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #d91d49 0%, #ea2b0f 100%);
+  background: linear-gradient(135deg, #e11d48 0%, #f97316 100%);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(217, 29, 73, 0.35);
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #b5153b 0%, #c82007 100%);
+  background: linear-gradient(135deg, #be123c 0%, #ea580c 100%);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(217, 29, 73, 0.45);
+  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.35);
 }
 
 .btn-secondary {
@@ -186,7 +184,7 @@ button, input, select, textarea {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #e2e8f0;
   border-color: var(--text-secondary);
 }
 
