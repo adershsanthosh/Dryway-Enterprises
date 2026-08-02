@@ -1,5 +1,5 @@
 :root {
-  /* Ultra-Clear & Attractive Light Theme Color Palette */
+  /* Default Light Theme Color Palette */
   --bg-primary: #f8fafc;        /* Soft Ivory Slate Background */
   --bg-secondary: #ffffff;      /* Pure White Card Surfaces */
   --bg-tertiary: #f1f5f9;       /* Light Slate Input Background */
@@ -38,6 +38,19 @@
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* Rich Dark Theme Palette */
+[data-theme="dark"] {
+  --bg-primary: #0b0f17;        /* Deep Midnight Obsidian */
+  --bg-secondary: #131822;      /* Elevated Slate Card Surface */
+  --bg-tertiary: #1e293b;       /* Dark Input Background */
+  --text-primary: #f8fafc;      /* Pure White Text */
+  --text-secondary: #cbd5e1;    /* Light Gray Subheadings */
+  --text-muted: #94a3b8;        /* Muted Muted Gray Text */
+  
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(225, 29, 72, 0.6);
+}
+
 /* Reset & Base Styles */
 * {
   margin: 0;
@@ -55,6 +68,7 @@ body {
   color: var(--text-primary);
   font-family: var(--font-body);
   line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -103,13 +117,13 @@ button, input, select, textarea {
   padding: 0 1.5rem;
 }
 
-/* Card Style for Light Mode */
+/* Card Style */
 .glass-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
   border-radius: var(--radius-md);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
 }
 
 .glass-card:hover {
@@ -145,7 +159,6 @@ button, input, select, textarea {
 .input-field:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15);
-  background: #ffffff;
 }
 
 /* Buttons */
@@ -181,7 +194,7 @@ button, input, select, textarea {
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
+  background: var(--border-color);
   border-color: var(--text-secondary);
 }
 
@@ -197,8 +210,8 @@ button, input, select, textarea {
 /* Products Responsive Grid */
 .grid-responsive {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
 }
 
 .checkout-grid,
@@ -243,14 +256,14 @@ button, input, select, textarea {
 
 @media (max-width: 768px) {
   :root {
-    --product-img-height: 120px;
+    --product-img-height: 130px;
   }
   .container {
-    padding: 0 0.75rem;
+    padding: 0 0.85rem;
   }
   .grid-responsive {
-    grid-template-columns: repeat(3, 1fr); /* Exactly 3 Products in a Line on Mobile */
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr); /* Exactly 2 Products in a Line on Mobile Phones */
+    gap: 0.75rem;
   }
   .nav-user-name {
     display: none;
@@ -262,10 +275,10 @@ button, input, select, textarea {
 
 @media (max-width: 480px) {
   :root {
-    --product-img-height: 100px;
+    --product-img-height: 120px;
   }
   .container {
-    padding: 0 0.5rem;
+    padding: 0 0.65rem;
   }
   h1 {
     font-size: 1.5rem !important;
@@ -274,23 +287,20 @@ button, input, select, textarea {
     font-size: 1.2rem !important;
   }
   .grid-responsive {
-    grid-template-columns: repeat(3, 1fr); /* Exactly 3 Products in a Line on Small Mobile Phones */
-    gap: 0.4rem;
+    grid-template-columns: repeat(2, 1fr); /* Exactly 2 Products in a Line on Small Mobile Phones */
+    gap: 0.6rem;
   }
   .glass-card {
-    padding: 0.5rem !important;
-    border-radius: 10px !important;
+    padding: 0.65rem !important;
+    border-radius: 12px !important;
   }
   .product-card-desc {
     display: none !important;
   }
   .product-card-title {
-    font-size: 0.75rem !important;
-    line-height: 1.15 !important;
-    margin-bottom: 0.2rem !important;
-  }
-  .product-card-price {
-    font-size: 0.75rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.3rem !important;
   }
 }
 

@@ -4,13 +4,15 @@ import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import { LanguageContext } from '../context/LanguageContext';
-import { ShoppingBag, User, ShieldAlert, LogOut, Award, Heart, Globe, Package, HelpCircle } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
+import { ShoppingBag, User, ShieldAlert, LogOut, Award, Heart, Globe, Sun, Moon, Package, HelpCircle } from 'lucide-react';
 
 const Navbar = ({ onCartOpen }) => {
   const { userInfo, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const { wishlistItems } = useContext(WishlistContext);
   const { lang, setLang, t } = useContext(LanguageContext);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,11 +28,12 @@ const Navbar = ({ onCartOpen }) => {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(255, 255, 255, 0.92)',
+        background: 'var(--bg-secondary)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border-color)',
-        boxShadow: '0 4px 20px -5px rgba(15, 23, 42, 0.05)',
-        padding: '1rem 0',
+        boxShadow: '0 4px 20px -5px rgba(0, 0, 0, 0.05)',
+        padding: '0.9rem 0',
+        transition: 'background 0.3s ease',
       }}
     >
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -65,7 +68,27 @@ const Navbar = ({ onCartOpen }) => {
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          {/* Light / Dark Mode Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0.5rem',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-color)',
+              color: isDarkMode ? '#facc15' : 'var(--text-primary)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           {/* Multi-Language Selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-tertiary)', padding: '0.25rem 0.6rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <Globe size={14} style={{ color: 'var(--text-muted)' }} />
@@ -82,10 +105,10 @@ const Navbar = ({ onCartOpen }) => {
                 outline: 'none',
               }}
             >
-              <option value="en" style={{ background: '#ffffff', color: '#0f172a' }}>English</option>
-              <option value="hi" style={{ background: '#ffffff', color: '#0f172a' }}>हिंदी (Hindi)</option>
-              <option value="ml" style={{ background: '#ffffff', color: '#0f172a' }}>മലയാളം (Malayalam)</option>
-              <option value="ta" style={{ background: '#ffffff', color: '#0f172a' }}>தமிழ் (Tamil)</option>
+              <option value="en" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>English</option>
+              <option value="hi" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>हिंदी (Hindi)</option>
+              <option value="ml" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>മലയാളം (Malayalam)</option>
+              <option value="ta" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>தமிழ் (Tamil)</option>
             </select>
           </div>
 
