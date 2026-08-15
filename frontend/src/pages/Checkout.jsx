@@ -174,6 +174,7 @@ const Checkout = () => {
           </div>
 
           <div
+            className="form-row-2col"
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',

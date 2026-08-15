@@ -281,14 +281,18 @@ button, input, select, textarea {
     grid-template-columns: repeat(2, 1fr); /* Exactly 2 Products in a Line on Mobile Phones */
     gap: 0.75rem;
   }
-  .nav-desktop-links {
+  .nav-desktop-links,
+  .nav-desktop-controls {
     display: none !important;
+  }
+  .nav-mobile-toggle {
+    display: flex !important;
   }
   .nav-user-name {
     display: none !important;
   }
-  .nav-logo-text {
-    font-size: 1.35rem !important;
+  .form-row-2col {
+    grid-template-columns: 1fr !important;
   }
   button, input, select {
     min-height: 38px;
@@ -303,17 +307,17 @@ button, input, select, textarea {
     padding: 0 0.65rem;
   }
   h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
   }
   h2 {
-    font-size: 1.2rem !important;
+    font-size: 1.15rem !important;
   }
   .grid-responsive {
     grid-template-columns: repeat(2, 1fr); /* Exactly 2 Products in a Line on Small Mobile Phones */
     gap: 0.5rem;
   }
   .glass-card {
-    padding: 0.65rem !important;
+    padding: 0.85rem !important;
     border-radius: 12px !important;
   }
   .product-card-desc {

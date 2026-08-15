@@ -4,7 +4,7 @@ export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('dryway_theme') || 'light';
+    return localStorage.getItem('dryway_theme') || 'dark';
   });
 
   useEffect(() => {
