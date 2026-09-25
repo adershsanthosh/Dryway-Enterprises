@@ -108,7 +108,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!userInfo || (!userInfo.isAdmin && !userInfo.isWorker)) {
-      navigate('/login');
+      navigate('/admin/login');
     }
   }, [userInfo, navigate]);
 
