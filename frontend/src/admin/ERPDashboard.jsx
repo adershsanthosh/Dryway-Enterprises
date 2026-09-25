@@ -82,6 +82,12 @@ const ERPDashboard = () => {
         fetch(`${API_BASE_URL}/api/erp/expenses`, { headers }),
       ]);
 
+      if (dashRes.status === 401 || suppRes.status === 401) {
+        localStorage.removeItem('userInfo');
+        window.location.href = '/admin/login';
+        return;
+      }
+
       if (dashRes.ok) setMetrics(await dashRes.json());
       if (suppRes.ok) setSuppliers(await suppRes.json());
       if (poRes.ok) setPurchaseOrders(await poRes.json());

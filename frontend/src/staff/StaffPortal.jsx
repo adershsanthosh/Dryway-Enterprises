@@ -53,6 +53,12 @@ const StaffPortal = () => {
         fetch(`${API_BASE_URL}/api/erp/batches`, { headers }),
       ]);
 
+      if (sessRes.status === 401 || payRes.status === 401) {
+        localStorage.removeItem('userInfo');
+        window.location.href = '/admin/login';
+        return;
+      }
+
       if (sessRes.ok) setSessions(await sessRes.json());
       if (payRes.ok) setPayroll(await payRes.json());
       if (batchRes.ok) setBatches(await batchRes.json());
