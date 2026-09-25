@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import ERPDashboard from './ERPDashboard';
 import {
   BarChart3,
   Package,
@@ -22,7 +23,8 @@ import {
   Percent,
   Play,
   Square,
-  Sparkles
+  Sparkles,
+  Factory
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -483,6 +485,7 @@ const AdminDashboard = () => {
       <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '2.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
         {[
           { id: 'overview', label: 'Overview', icon: <BarChart3 size={16} /> },
+          { id: 'erp', label: 'Dryway ERP Suite', icon: <Factory size={16} /> },
           { id: 'products', label: 'Products & Prices', icon: <Package size={16} /> },
           { id: 'offers', label: 'Offers & Discounts', icon: <Tag size={16} /> },
           { id: 'workers', label: 'Worker Staff Access', icon: <Users size={16} /> },
@@ -513,6 +516,9 @@ const AdminDashboard = () => {
           </button>
         ))}
       </div>
+
+      {/* TAB 0: DRYWAY ERP SUITE */}
+      {activeTab === 'erp' && <ERPDashboard />}
 
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (

@@ -10,6 +10,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import workerRoutes from './routes/workerRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import erpRoutes from './routes/erpRoutes.js';
 
 // Load Env variables
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/erp', erpRoutes);
 
 // Root API Health Endpoint
 app.get('/api/health', (req, res) => {
