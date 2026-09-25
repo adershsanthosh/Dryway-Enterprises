@@ -10,6 +10,10 @@ export const inMemoryUsers = [
     isAdmin: true,
     isWorker: false,
     workerRole: 'Administrator',
+    monthlySalary: 65000,
+    hourlyRate: 400,
+    joiningDate: '2025-06-01',
+    shiftTiming: 'General Executive Shift (9:00 AM - 6:00 PM)',
     permissions: {
       canEditPrices: true,
       canManageInventory: true,
@@ -26,6 +30,10 @@ export const inMemoryUsers = [
     isAdmin: false,
     isWorker: true,
     workerRole: 'Inventory & Kitchen Specialist',
+    monthlySalary: 32000,
+    hourlyRate: 200,
+    joiningDate: '2026-01-15',
+    shiftTiming: 'Morning Processing Shift (7:00 AM - 4:00 PM)',
     permissions: {
       canEditPrices: true,
       canManageInventory: true,
@@ -42,6 +50,10 @@ export const inMemoryUsers = [
     isAdmin: false,
     isWorker: true,
     workerRole: 'Order Fulfillment Staff',
+    monthlySalary: 26000,
+    hourlyRate: 165,
+    joiningDate: '2026-02-10',
+    shiftTiming: 'Fulfillment & Logistics Shift (10:00 AM - 7:00 PM)',
     permissions: {
       canEditPrices: false,
       canManageInventory: true,
@@ -49,6 +61,43 @@ export const inMemoryUsers = [
       canManageOffers: false,
     },
     loyaltyPoints: 20,
+  },
+];
+
+export const inMemoryPayrollRecords = [
+  {
+    _id: 'pay_001',
+    workerId: 'worker_001',
+    workerName: 'Rahul Sharma',
+    workerRole: 'Inventory & Kitchen Specialist',
+    monthYear: 'September 2026',
+    baseSalary: 32000,
+    hoursWorked: 168,
+    overtimeHours: 8,
+    overtimePay: 2400, // 8 * 200 * 1.5
+    allowances: 1500, // Meal & shift allowance
+    deductions: 500,
+    netPayable: 35400,
+    paymentStatus: 'Paid',
+    paymentDate: '2026-09-24',
+    transactionRef: 'TXN-DRY-99482',
+  },
+  {
+    _id: 'pay_002',
+    workerId: 'worker_002',
+    workerName: 'Ananya Nair',
+    workerRole: 'Order Fulfillment Staff',
+    monthYear: 'September 2026',
+    baseSalary: 26000,
+    hoursWorked: 160,
+    overtimeHours: 0,
+    overtimePay: 0,
+    allowances: 1000,
+    deductions: 300,
+    netPayable: 26700,
+    paymentStatus: 'Approved',
+    paymentDate: '2026-09-25',
+    transactionRef: 'TXN-DRY-99483',
   },
 ];
 

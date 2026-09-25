@@ -22,15 +22,17 @@ import HelpCenter from './pages/HelpCenter';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminLogin from './admin/AdminLogin';
 import ERPPage from './admin/ERPPage';
+import StaffPortal from './staff/StaffPortal';
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const location = useLocation();
 
-  // Hide customer Navbar & Footer on dedicated Admin and ERP management routes
+  // Hide customer Navbar & Footer on dedicated Admin, ERP, and Staff management routes
   const isAdminOrERPRoute =
     location.pathname.startsWith('/admin') ||
-    location.pathname.startsWith('/erp');
+    location.pathname.startsWith('/erp') ||
+    location.pathname.startsWith('/staff');
 
   return (
     <div
@@ -57,12 +59,14 @@ function AppContent() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/help" element={<HelpCenter />} />
 
-          {/* Standalone Admin & ERP Management Portals (Separated from Customer Website) */}
+          {/* Standalone Admin, ERP & Staff Management Portals */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/erp" element={<ERPPage />} />
           <Route path="/erp/login" element={<AdminLogin />} />
+          <Route path="/staff" element={<StaffPortal />} />
+          <Route path="/staff/portal" element={<StaffPortal />} />
         </Routes>
       </main>
 

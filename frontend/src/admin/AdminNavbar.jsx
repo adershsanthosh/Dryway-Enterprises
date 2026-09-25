@@ -8,6 +8,7 @@ import {
   LogOut,
   ExternalLink,
   User,
+  Clock,
 } from 'lucide-react';
 
 const AdminNavbar = () => {
@@ -98,6 +99,25 @@ const AdminNavbar = () => {
             }}
           >
             <Factory size={15} /> ERP System
+          </Link>
+
+          <Link
+            to="/staff"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.45rem 0.9rem',
+              borderRadius: '6px',
+              fontSize: '0.825rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+              background: location.pathname.startsWith('/staff') ? '#2bbef9' : 'rgba(255, 255, 255, 0.06)',
+              color: location.pathname.startsWith('/staff') ? '#000' : '#fff',
+              border: location.pathname.startsWith('/staff') ? '1px solid #2bbef9' : '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <Clock size={15} /> Staff Portal
           </Link>
 
           <a

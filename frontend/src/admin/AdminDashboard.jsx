@@ -89,6 +89,9 @@ const AdminDashboard = () => {
   const [workerEmail, setWorkerEmail] = useState('');
   const [workerPassword, setWorkerPassword] = useState('');
   const [workerRole, setWorkerRole] = useState('Inventory & Kitchen Specialist');
+  const [workerSalary, setWorkerSalary] = useState('28000');
+  const [workerHourlyRate, setWorkerHourlyRate] = useState('175');
+  const [workerShiftTiming, setWorkerShiftTiming] = useState('Morning Processing Shift (7:00 AM - 4:00 PM)');
   const [canEditPrices, setCanEditPrices] = useState(false);
   const [canManageInventory, setCanManageInventory] = useState(true);
   const [canProcessOrders, setCanProcessOrders] = useState(true);
@@ -297,6 +300,9 @@ const AdminDashboard = () => {
       email: workerEmail,
       password: workerPassword,
       workerRole,
+      monthlySalary: Number(workerSalary),
+      hourlyRate: Number(workerHourlyRate),
+      shiftTiming: workerShiftTiming,
       permissions: {
         canEditPrices,
         canManageInventory,
@@ -327,6 +333,36 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       alert(`Worker creation failed: ${err.message}`);
+    }
+  };
+
+  // Handle Salary Payout
+  const handlePayoutSalary = async (worker) => {
+    if (!window.confirm(`Confirm monthly salary payout for ${worker.name} (Base Pay: ₹${worker.monthlySalary || 28000})? This will log the expense into ERP Operating Expenses.`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers/payroll/payout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          workerId: worker._id,
+          monthYear: `${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}`,
+          baseSalary: worker.monthlySalary || 28000,
+          overtimeHours: 6,
+          allowances: 1000,
+        }),
+      });
+      if (res.ok) {
+        alert(`Salary payout processed successfully for ${worker.name}! Logged to ERP Finance.`);
+        fetchWorkersAndSessions();
+      } else {
+        const err = await res.json();
+        alert(err.message);
+      }
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -755,8 +791,10 @@ const AdminDashboard = () => {
                   <th style={{ padding: '0.75rem 1rem' }}>Staff Name</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Email</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Role</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Monthly Salary</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Hourly Rate</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Permissions</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Status</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Salary Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -769,6 +807,12 @@ const AdminDashboard = () => {
                         {worker.workerRole || (worker.isAdmin ? 'Administrator' : 'Staff')}
                       </span>
                     </td>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 700, color: '#22c55e' }}>
+                      ₹{(worker.monthlySalary || 28000).toLocaleString('en-IN')}
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#2bbef9', fontWeight: 600 }}>
+                      ₹{worker.hourlyRate || 175} / hr
+                    </td>
                     <td style={{ padding: '0.75rem 1rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                         {worker.permissions?.canEditPrices && <span style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem' }}>Price Edit</span>}
@@ -777,7 +821,15 @@ const AdminDashboard = () => {
                       </div>
                     </td>
                     <td style={{ padding: '0.75rem 1rem' }}>
-                      <span style={{ color: '#22c55e', fontWeight: 600 }}>Active</span>
+                      {userInfo?.isAdmin && (
+                        <button
+                          onClick={() => handlePayoutSalary(worker)}
+                          className="btn btn-secondary"
+                          style={{ fontSize: '0.75rem', padding: '0.3rem 0.7rem', borderColor: '#22c55e', color: '#22c55e' }}
+                        >
+                          Payout Salary
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -1214,6 +1266,31 @@ const AdminDashboard = () => {
                 <option value="Pricing & Promotions Officer">Pricing & Promotions Officer</option>
                 <option value="Shift Operations Supervisor">Shift Operations Supervisor</option>
               </select>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '1rem' }}>
+              <div>
+                <label className="form-label">Monthly Salary (₹)</label>
+                <input
+                  type="number"
+                  required
+                  className="input-field"
+                  placeholder="28000"
+                  value={workerSalary}
+                  onChange={(e) => setWorkerSalary(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="form-label">Hourly Rate (₹)</label>
+                <input
+                  type="number"
+                  required
+                  className="input-field"
+                  placeholder="175"
+                  value={workerHourlyRate}
+                  onChange={(e) => setWorkerHourlyRate(e.target.value)}
+                />
+              </div>
             </div>
 
             <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
