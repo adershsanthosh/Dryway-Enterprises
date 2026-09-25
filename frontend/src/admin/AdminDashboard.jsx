@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import ERPDashboard from './ERPDashboard';
+import AdminNavbar from './AdminNavbar';
 import {
   BarChart3,
   Package,
@@ -392,8 +393,10 @@ const AdminDashboard = () => {
   const activeOffersCount = products.filter((p) => p.isOffer).length;
 
   return (
-    <div className="container animate-fade-in" style={{ padding: '3rem 1rem' }}>
-      {/* Title Header */}
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <AdminNavbar />
+      <div className="container animate-fade-in" style={{ padding: '2rem 1rem' }}>
+        {/* Title Header */}
       <div
         style={{
           display: 'flex',
@@ -1248,6 +1251,7 @@ const AdminDashboard = () => {
           </form>
         </div>
       )}
+      </div>
     </div>
   );
 };

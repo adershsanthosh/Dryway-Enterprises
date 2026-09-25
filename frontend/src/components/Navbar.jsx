@@ -81,18 +81,6 @@ const Navbar = ({ onCartOpen }) => {
           <Link to="/help" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-secondary)' }} className="nav-link">
             {t('helpCenter')}
           </Link>
-
-          {userInfo && (userInfo.isAdmin || userInfo.isWorker) ? (
-            <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#e11d48', fontWeight: 700, fontSize: '0.85rem', background: 'rgba(225, 29, 72, 0.08)', padding: '0.3rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(225, 29, 72, 0.2)' }}>
-              <ShieldAlert size={14} />
-              {t('adminPortal')}
-            </Link>
-          ) : (
-            <Link to="/admin/login" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--text-secondary)', fontWeight: 500, fontSize: '0.8rem' }}>
-              <ShieldAlert size={13} />
-              Admin Login
-            </Link>
-          )}
         </div>
 
         {/* Action Controls */}
@@ -332,18 +320,6 @@ const Navbar = ({ onCartOpen }) => {
             <Link to="/help" onClick={closeMobileMenu} style={{ fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '1rem' }}>
               {t('helpCenter')}
             </Link>
-
-            {userInfo && (userInfo.isAdmin || userInfo.isWorker) ? (
-              <Link to="/admin" onClick={closeMobileMenu} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#e11d48', fontWeight: 700, fontSize: '0.9rem' }}>
-                <ShieldAlert size={16} />
-                {t('adminPortal')}
-              </Link>
-            ) : (
-              <Link to="/admin/login" onClick={closeMobileMenu} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>
-                <ShieldAlert size={14} />
-                Admin Login
-              </Link>
-            )}
           </div>
 
           <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)' }} />

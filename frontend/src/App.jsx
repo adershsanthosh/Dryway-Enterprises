@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { LanguageProvider } from './context/LanguageContext';
@@ -21,46 +21,64 @@ import HelpCenter from './pages/HelpCenter';
 
 import AdminDashboard from './admin/AdminDashboard';
 import AdminLogin from './admin/AdminLogin';
+import ERPPage from './admin/ERPPage';
+
+function AppContent() {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const location = useLocation();
+
+  // Hide customer Navbar & Footer on dedicated Admin and ERP management routes
+  const isAdminOrERPRoute =
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/erp');
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+      }}
+    >
+      {!isAdminOrERPRoute && <Navbar onCartOpen={() => setIsCartOpen(true)} />}
+      {!isAdminOrERPRoute && <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />}
+
+      <main style={{ flex: 1 }}>
+        <Routes>
+          {/* Customer E-Commerce Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order/:id" element={<OrderDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/myorders" element={<MyOrders />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/help" element={<HelpCenter />} />
+
+          {/* Standalone Admin & ERP Management Portals (Separated from Customer Website) */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/erp" element={<ERPPage />} />
+          <Route path="/erp/login" element={<AdminLogin />} />
+        </Routes>
+      </main>
+
+      {!isAdminOrERPRoute && <Footer />}
+    </div>
+  );
+}
 
 function App() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
   return (
     <ThemeProvider>
       <LanguageProvider>
         <WishlistProvider>
           <SplashIntro />
           <Router>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-              }}
-            >
-              <Navbar onCartOpen={() => setIsCartOpen(true)} />
-              <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-
-              <main style={{ flex: 1 }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/product/:id" element={<ProductDetails />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/order/:id" element={<OrderDetails />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/myorders" element={<MyOrders />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/help" element={<HelpCenter />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route path="/admin-login" element={<AdminLogin />} />
-                </Routes>
-              </main>
-
-              <Footer />
-            </div>
+            <AppContent />
           </Router>
         </WishlistProvider>
       </LanguageProvider>
