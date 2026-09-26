@@ -56,11 +56,21 @@ const Navbar = ({ onCartOpen }) => {
     >
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Brand Logo */}
-        <Link to="/" onClick={closeMobileMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
+        <Link to="/" onClick={closeMobileMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none' }}>
+          <img
+            src="/logo.jpg"
+            alt="Dryway Logo"
+            style={{
+              height: '38px',
+              borderRadius: '20px',
+              objectFit: 'contain',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+          />
           <span
             className="nav-logo-text"
             style={{
-              fontSize: 'clamp(1.2rem, 4vw, 1.65rem)',
+              fontSize: 'clamp(1.1rem, 3.5vw, 1.45rem)',
               fontWeight: 900,
               fontFamily: 'var(--font-headings)',
               letterSpacing: '0.02em',
@@ -68,7 +78,7 @@ const Navbar = ({ onCartOpen }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            THE DRY <span style={{ background: 'linear-gradient(135deg, #f97316 0%, #e11d48 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>WAY</span>
+            THE DRY <span style={{ background: 'linear-gradient(135deg, #d91d49 0%, #ea2b0f 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>WAY</span>
           </span>
         </Link>
 

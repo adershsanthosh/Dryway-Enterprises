@@ -69,19 +69,20 @@ const SplashIntro = ({ onComplete }) => {
         {/* Animated Brand Emblem */}
         <div
           style={{
-            width: '80px',
-            height: '80px',
-            background: 'linear-gradient(135deg, #e11d48 0%, #f97316 100%)',
-            borderRadius: '24px',
+            width: '100px',
+            height: '100px',
+            background: 'transparent',
+            borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '1.5rem',
             boxShadow: '0 10px 30px rgba(225, 29, 72, 0.4)',
             animation: 'bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            overflow: 'hidden',
           }}
         >
-          <Leaf size={42} style={{ color: '#ffffff' }} />
+          <img src="/logo.jpg" alt="Dryway Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
 
         {/* Animated Title */}
