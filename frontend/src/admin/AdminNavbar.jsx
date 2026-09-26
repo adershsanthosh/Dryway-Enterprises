@@ -150,9 +150,6 @@ const AdminNavbar = () => {
               <div style={{ color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <User size={13} color="#38bdf8" /> {userInfo.name}
               </div>
-              <span style={{ color: userInfo.isAdmin ? '#f43f5e' : '#38bdf8', fontSize: '0.7rem', fontWeight: 700 }}>
-                {userInfo.workerRole || (userInfo.isAdmin ? 'Master Administrator' : 'Staff')}
-              </span>
             </div>
 
             <button
