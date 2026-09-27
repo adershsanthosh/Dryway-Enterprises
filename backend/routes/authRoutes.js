@@ -3,13 +3,14 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import { protect } from '../middleware/auth.js';
+import { protect, admin } from '../middleware/auth.js';
 import {
   findUserByEmail,
   findUserById,
   createInMemoryUser,
   matchInMemoryPassword,
   updateInMemoryUserPassword,
+  inMemoryUsers,
 } from '../utils/inMemoryStore.js';
 
 const router = express.Router();
@@ -290,6 +291,98 @@ router.put('/profile', protect, async (req, res) => {
     }
   } catch (error) {
     console.error('Update Profile Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Get all users (Admin only)
+// @route   GET /api/auth/users
+// @access  Private/Admin
+router.get('/users', protect, admin, async (req, res) => {
+  try {
+    if (isDbConnected()) {
+      const users = await User.find({}).select('-password');
+      return res.json(users);
+    } else {
+      const sanitized = inMemoryUsers.map(({ password, ...u }) => u);
+      return res.json(sanitized);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Update user by ID (Admin only)
+// @route   PUT /api/auth/users/:id
+// @access  Private/Admin
+router.put('/users/:id', protect, admin, async (req, res) => {
+  const { name, email, isAdmin, isWorker, workerRole, loyaltyPoints } = req.body;
+  try {
+    if (isDbConnected()) {
+      const user = await User.findById(req.params.id);
+      if (user) {
+        user.name = name || user.name;
+        user.email = email || user.email;
+        if (isAdmin !== undefined) user.isAdmin = Boolean(isAdmin);
+        if (isWorker !== undefined) user.isWorker = Boolean(isWorker);
+        if (workerRole !== undefined) user.workerRole = workerRole;
+        if (loyaltyPoints !== undefined) user.loyaltyPoints = Number(loyaltyPoints);
+
+        const updatedUser = await user.save();
+        return res.json({
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          isAdmin: updatedUser.isAdmin,
+          isWorker: updatedUser.isWorker,
+          workerRole: updatedUser.workerRole,
+          loyaltyPoints: updatedUser.loyaltyPoints,
+        });
+      }
+    } else {
+      const user = inMemoryUsers.find((u) => u._id === req.params.id);
+      if (user) {
+        user.name = name || user.name;
+        user.email = email || user.email;
+        if (isAdmin !== undefined) user.isAdmin = Boolean(isAdmin);
+        if (isWorker !== undefined) user.isWorker = Boolean(isWorker);
+        if (workerRole !== undefined) user.workerRole = workerRole;
+        if (loyaltyPoints !== undefined) user.loyaltyPoints = Number(loyaltyPoints);
+
+        const { password, ...sanitized } = user;
+        return res.json(sanitized);
+      }
+    }
+    return res.status(404).json({ message: 'User not found' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Delete user by ID (Admin only)
+// @route   DELETE /api/auth/users/:id
+// @access  Private/Admin
+router.delete('/users/:id', protect, admin, async (req, res) => {
+  try {
+    if (req.params.id === req.user._id.toString()) {
+      return res.status(400).json({ message: 'Cannot delete logged in admin account' });
+    }
+
+    if (isDbConnected()) {
+      const user = await User.findById(req.params.id);
+      if (user) {
+        await user.deleteOne();
+        return res.json({ message: 'User account removed successfully' });
+      }
+    } else {
+      const index = inMemoryUsers.findIndex((u) => u._id === req.params.id);
+      if (index !== -1) {
+        inMemoryUsers.splice(index, 1);
+        return res.json({ message: 'User account removed successfully' });
+      }
+    }
+    return res.status(404).json({ message: 'User not found' });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });

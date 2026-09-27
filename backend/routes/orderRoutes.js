@@ -202,4 +202,74 @@ router.put('/:id/pay', protect, async (req, res) => {
   }
 });
 
+// @desc    Admin update order details & status
+// @route   PUT /api/orders/:id
+// @access  Private/Admin
+router.put('/:id', protect, admin, async (req, res) => {
+  const { isPaid, isDelivered, shippingAddress, totalPrice } = req.body;
+  try {
+    if (isDbConnected()) {
+      const order = await Order.findById(req.params.id);
+      if (order) {
+        if (isPaid !== undefined) {
+          order.isPaid = Boolean(isPaid);
+          if (isPaid && !order.paidAt) order.paidAt = Date.now();
+        }
+        if (isDelivered !== undefined) {
+          order.isDelivered = Boolean(isDelivered);
+          if (isDelivered && !order.deliveredAt) order.deliveredAt = Date.now();
+        }
+        if (shippingAddress) order.shippingAddress = shippingAddress;
+        if (totalPrice !== undefined) order.totalPrice = Number(totalPrice);
+
+        const updatedOrder = await order.save();
+        return res.json(updatedOrder);
+      }
+    } else {
+      const order = await findOrderById(req.params.id);
+      if (order) {
+        if (isPaid !== undefined) {
+          order.isPaid = Boolean(isPaid);
+          if (isPaid && !order.paidAt) order.paidAt = new Date().toISOString();
+        }
+        if (isDelivered !== undefined) {
+          order.isDelivered = Boolean(isDelivered);
+          if (isDelivered && !order.deliveredAt) order.deliveredAt = new Date().toISOString();
+        }
+        if (shippingAddress) order.shippingAddress = shippingAddress;
+        if (totalPrice !== undefined) order.totalPrice = Number(totalPrice);
+
+        return res.json(order);
+      }
+    }
+    return res.status(404).json({ message: 'Order not found' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Admin delete order
+// @route   DELETE /api/orders/:id
+// @access  Private/Admin
+router.delete('/:id', protect, admin, async (req, res) => {
+  try {
+    if (isDbConnected()) {
+      const order = await Order.findById(req.params.id);
+      if (order) {
+        await order.deleteOne();
+        return res.json({ message: 'Order deleted successfully' });
+      }
+    } else {
+      const index = inMemoryOrders.findIndex((o) => o._id === req.params.id);
+      if (index !== -1) {
+        inMemoryOrders.splice(index, 1);
+        return res.json({ message: 'Order deleted successfully' });
+      }
+    }
+    return res.status(404).json({ message: 'Order not found' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

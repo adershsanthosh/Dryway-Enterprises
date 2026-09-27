@@ -86,6 +86,8 @@ const AdminDashboard = () => {
 
   // Worker Form Modal States
   const [showWorkerModal, setShowWorkerModal] = useState(false);
+  const [workerEditMode, setWorkerEditMode] = useState(false);
+  const [selectedWorkerId, setSelectedWorkerId] = useState('');
   const [workerName, setWorkerName] = useState('');
   const [workerEmail, setWorkerEmail] = useState('');
   const [workerPassword, setWorkerPassword] = useState('');
@@ -97,6 +99,22 @@ const AdminDashboard = () => {
   const [canManageInventory, setCanManageInventory] = useState(true);
   const [canProcessOrders, setCanProcessOrders] = useState(true);
   const [canManageOffers, setCanManageOffers] = useState(false);
+
+  // Order Edit Modal States
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [editOrderPaid, setEditOrderPaid] = useState(false);
+  const [editOrderDelivered, setEditOrderDelivered] = useState(false);
+
+  // Customer / User Accounts States
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editUserName, setEditUserName] = useState('');
+  const [editUserEmail, setEditUserEmail] = useState('');
+  const [editUserIsAdmin, setEditUserIsAdmin] = useState(false);
+  const [editUserLoyaltyPoints, setEditUserLoyaltyPoints] = useState(0);
 
   // Shift Session Clock-In/Out States
   const [taskDescription, setTaskDescription] = useState('');
@@ -168,10 +186,29 @@ const AdminDashboard = () => {
     }
   };
 
+  // Fetch Customer / User Accounts
+  const fetchUsers = async () => {
+    if (!userInfo?.isAdmin) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(Array.isArray(data) ? data : []);
+      }
+      setLoadingUsers(false);
+    } catch (err) {
+      console.error(err);
+      setLoadingUsers(false);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchOrders();
     fetchWorkersAndSessions();
+    if (userInfo?.isAdmin) fetchUsers();
   }, [userInfo]);
 
   // Open Create Product Modal
@@ -293,13 +330,48 @@ const AdminDashboard = () => {
     }
   };
 
-  // Handle Add Worker Account
+  // Open Create Worker Modal
+  const openCreateWorkerModal = () => {
+    setWorkerEditMode(false);
+    setSelectedWorkerId('');
+    setWorkerName('');
+    setWorkerEmail('');
+    setWorkerPassword('');
+    setWorkerRole('Inventory & Kitchen Specialist');
+    setWorkerSalary('28000');
+    setWorkerHourlyRate('175');
+    setWorkerShiftTiming('Morning Processing Shift (7:00 AM - 4:00 PM)');
+    setCanEditPrices(false);
+    setCanManageInventory(true);
+    setCanProcessOrders(true);
+    setCanManageOffers(false);
+    setShowWorkerModal(true);
+  };
+
+  // Open Edit Worker Modal
+  const openEditWorkerModal = (worker) => {
+    setWorkerEditMode(true);
+    setSelectedWorkerId(worker._id);
+    setWorkerName(worker.name);
+    setWorkerEmail(worker.email);
+    setWorkerPassword('');
+    setWorkerRole(worker.workerRole || 'Inventory & Kitchen Specialist');
+    setWorkerSalary(String(worker.monthlySalary || 28000));
+    setWorkerHourlyRate(String(worker.hourlyRate || 175));
+    setWorkerShiftTiming(worker.shiftTiming || 'Morning Processing Shift (7:00 AM - 4:00 PM)');
+    setCanEditPrices(Boolean(worker.permissions?.canEditPrices));
+    setCanManageInventory(worker.permissions?.canManageInventory !== false);
+    setCanProcessOrders(worker.permissions?.canProcessOrders !== false);
+    setCanManageOffers(Boolean(worker.permissions?.canManageOffers));
+    setShowWorkerModal(true);
+  };
+
+  // Handle Add or Edit Worker Account
   const handleAddWorkerSubmit = async (e) => {
     e.preventDefault();
     const payload = {
       name: workerName,
       email: workerEmail,
-      password: workerPassword,
       workerRole,
       monthlySalary: Number(workerSalary),
       hourlyRate: Number(workerHourlyRate),
@@ -311,10 +383,18 @@ const AdminDashboard = () => {
         canManageOffers,
       },
     };
+    if (workerPassword) {
+      payload.password = workerPassword;
+    }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/workers`, {
-        method: 'POST',
+      const url = workerEditMode
+        ? `${API_BASE_URL}/api/workers/${selectedWorkerId}`
+        : `${API_BASE_URL}/api/workers`;
+      const method = workerEditMode ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userInfo.token}`,
@@ -330,10 +410,147 @@ const AdminDashboard = () => {
         fetchWorkersAndSessions();
       } else {
         const data = await res.json();
-        alert(data.message || 'Worker creation failed');
+        alert(data.message || 'Worker operation failed');
       }
     } catch (err) {
-      alert(`Worker creation failed: ${err.message}`);
+      alert(`Worker operation failed: ${err.message}`);
+    }
+  };
+
+  // Handle Delete Worker
+  const handleDeleteWorker = async (workerId, name) => {
+    if (!window.confirm(`Are you sure you want to remove worker access for "${name}"?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers/${workerId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchWorkersAndSessions();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete worker');
+      }
+    } catch (err) {
+      alert(`Error deleting worker: ${err.message}`);
+    }
+  };
+
+  // Open Edit Order Modal
+  const openEditOrderModal = (order) => {
+    setSelectedOrder(order);
+    setEditOrderPaid(Boolean(order.isPaid));
+    setEditOrderDelivered(Boolean(order.isDelivered));
+    setShowOrderModal(true);
+  };
+
+  // Handle Update Order Submit
+  const handleUpdateOrderSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedOrder) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${selectedOrder._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          isPaid: editOrderPaid,
+          isDelivered: editOrderDelivered,
+        }),
+      });
+      if (res.ok) {
+        setShowOrderModal(false);
+        fetchOrders();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to update order');
+      }
+    } catch (err) {
+      alert(`Error updating order: ${err.message}`);
+    }
+  };
+
+  // Handle Delete Order
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm(`Are you sure you want to permanently delete order #${orderId}? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchOrders();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete order');
+      }
+    } catch (err) {
+      alert(`Error deleting order: ${err.message}`);
+    }
+  };
+
+  // Open Edit User Modal
+  const openEditUserModal = (u) => {
+    setSelectedUser(u);
+    setEditUserName(u.name);
+    setEditUserEmail(u.email);
+    setEditUserIsAdmin(Boolean(u.isAdmin));
+    setEditUserLoyaltyPoints(u.loyaltyPoints || 0);
+    setShowUserModal(true);
+  };
+
+  // Handle Update User Submit
+  const handleUpdateUserSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedUser) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/${selectedUser._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          name: editUserName,
+          email: editUserEmail,
+          isAdmin: editUserIsAdmin,
+          loyaltyPoints: Number(editUserLoyaltyPoints),
+        }),
+      });
+      if (res.ok) {
+        setShowUserModal(false);
+        fetchUsers();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to update user');
+      }
+    } catch (err) {
+      alert(`Error updating user: ${err.message}`);
+    }
+  };
+
+  // Handle Delete User
+  const handleDeleteUser = async (userId, name) => {
+    if (userId === userInfo._id) {
+      alert('You cannot delete your own logged-in admin account.');
+      return;
+    }
+    if (!window.confirm(`Are you sure you want to delete user account "${name}"?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/${userId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchUsers();
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete user');
+      }
+    } catch (err) {
+      alert(`Error deleting user: ${err.message}`);
     }
   };
 
@@ -485,7 +702,7 @@ const AdminDashboard = () => {
 
         <div style={{ display: 'flex', gap: '0.8rem' }}>
           {userInfo?.isAdmin && (
-            <button className="btn btn-secondary" onClick={() => setShowWorkerModal(true)}>
+            <button className="btn btn-secondary" onClick={openCreateWorkerModal}>
               <Users size={16} /> Add Worker Staff
             </button>
           )}
@@ -556,9 +773,10 @@ const AdminDashboard = () => {
           { id: 'erp', label: 'Dryway ERP Suite', icon: <Factory size={16} /> },
           { id: 'products', label: 'Products & Prices', icon: <Package size={16} /> },
           { id: 'offers', label: 'Offers & Discounts', icon: <Tag size={16} /> },
+          { id: 'orders', label: 'Orders', icon: <ShoppingBag size={16} /> },
           { id: 'workers', label: 'Worker Staff Access', icon: <Users size={16} /> },
           { id: 'sessions', label: 'Shift Sessions Log', icon: <Clock size={16} /> },
-          { id: 'orders', label: 'Orders', icon: <ShoppingBag size={16} /> },
+          ...(userInfo?.isAdmin ? [{ id: 'users', label: 'Customer Accounts', icon: <ShieldCheck size={16} /> }] : []),
         ].map((tab) => (
           <button
             key={tab.id}
@@ -853,23 +1071,39 @@ const AdminDashboard = () => {
                     <td style={{ padding: '0.75rem 1rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                         {userInfo?.isAdmin && (
-                          <button
-                            onClick={() => handlePayoutSalary(worker)}
-                            className="btn btn-secondary"
-                            style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#22c55e', color: '#22c55e' }}
-                          >
-                            Payout Salary
-                          </button>
-                        )}
-                        {userInfo?.isAdmin && (
-                          <button
-                            onClick={() => handleResetWorkerPassword(worker)}
-                            className="btn btn-secondary"
-                            style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#f59e0b', color: '#f59e0b', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
-                            title="Reset staff password"
-                          >
-                            <KeyRound size={12} /> Password
-                          </button>
+                          <>
+                            <button
+                              onClick={() => openEditWorkerModal(worker)}
+                              className="btn btn-secondary"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#2bbef9', color: '#2bbef9', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                              title="Edit Worker Staff"
+                            >
+                              <Edit2 size={12} /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteWorker(worker._id, worker.name)}
+                              className="btn btn-danger"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                              title="Delete Worker Access"
+                            >
+                              <Trash2 size={12} /> Delete
+                            </button>
+                            <button
+                              onClick={() => handlePayoutSalary(worker)}
+                              className="btn btn-secondary"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#22c55e', color: '#22c55e' }}
+                            >
+                              Payout
+                            </button>
+                            <button
+                              onClick={() => handleResetWorkerPassword(worker)}
+                              className="btn btn-secondary"
+                              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#f59e0b', color: '#f59e0b', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                              title="Reset staff password"
+                            >
+                              <KeyRound size={12} /> Pass
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>
@@ -984,13 +1218,122 @@ const AdminDashboard = () => {
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem 1rem' }}>
-                        <button
-                          onClick={() => navigate(`/order/${order._id}`)}
-                          className="btn btn-secondary"
-                          style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => navigate(`/order/${order._id}`)}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
+                            title="View Order Details"
+                          >
+                            <FileText size={14} /> View
+                          </button>
+                          {userInfo?.isAdmin && (
+                            <>
+                              <button
+                                onClick={() => openEditOrderModal(order)}
+                                className="btn btn-secondary"
+                                style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem', color: '#2bbef9', borderColor: '#2bbef9' }}
+                                title="Edit Order Status"
+                              >
+                                <Edit2 size={14} /> Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteOrder(order._id)}
+                                className="btn btn-danger"
+                                style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
+                                title="Delete Order"
+                              >
+                                <Trash2 size={14} /> Delete
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 7: CUSTOMER & USER ACCOUNTS */}
+      {activeTab === 'users' && userInfo?.isAdmin && (
+        <div className="glass-card animate-fade-in" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
+                Customer & User Accounts ({users.length} Accounts)
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                Manage registered customer profiles, administrative privileges, loyalty rewards, or delete obsolete accounts.
+              </p>
+            </div>
+            <button className="btn btn-secondary" onClick={fetchUsers} style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}>
+              Refresh Users
+            </button>
+          </div>
+
+          {loadingUsers ? (
+            <p>Loading accounts...</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '0.75rem 1rem' }}>User ID</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Full Name</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Email Address</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Role</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Loyalty Points</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u._id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '0.75rem 1rem', fontFamily: 'monospace', fontSize: '0.75rem' }}>{u._id}</td>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: '#fff' }}>{u.name}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>{u.email}</td>
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        <span
+                          style={{
+                            background: u.isAdmin ? 'rgba(217,29,73,0.15)' : u.isWorker ? 'rgba(43,190,249,0.15)' : 'rgba(255,255,255,0.06)',
+                            color: u.isAdmin ? '#d91d49' : u.isWorker ? '#2bbef9' : 'var(--text-secondary)',
+                            fontWeight: 700,
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '4px',
+                            fontSize: '0.75rem',
+                          }}
                         >
-                          <FileText size={14} /> View
-                        </button>
+                          {u.isAdmin ? 'Admin' : u.isWorker ? 'Worker' : 'Customer'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 700, color: '#22c55e' }}>
+                        {u.loyaltyPoints || 0} pts
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button
+                            onClick={() => openEditUserModal(u)}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem', color: '#2bbef9', borderColor: '#2bbef9', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                            title="Edit User Profile"
+                          >
+                            <Edit2 size={12} /> Edit
+                          </button>
+                          {u._id !== userInfo._id && (
+                            <button
+                              onClick={() => handleDeleteUser(u._id, u.name)}
+                              className="btn btn-danger"
+                              style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                              title="Delete User Account"
+                            >
+                              <Trash2 size={12} /> Delete
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1249,7 +1592,7 @@ const AdminDashboard = () => {
               }}
             >
               <h3 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
-                Add New Worker Staff Account
+                {workerEditMode ? 'Edit Worker Staff Profile' : 'Add New Worker Staff Account'}
               </h3>
               <button
                 type="button"
@@ -1285,12 +1628,14 @@ const AdminDashboard = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Staff Password</label>
+              <label className="form-label">
+                Staff Password {workerEditMode && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>(leave blank to keep current)</span>}
+              </label>
               <input
                 type="password"
-                required
+                required={!workerEditMode}
                 className="input-field"
-                placeholder="Set worker password"
+                placeholder={workerEditMode ? 'Leave blank to retain password' : 'Set worker password'}
                 value={workerPassword}
                 onChange={(e) => setWorkerPassword(e.target.value)}
               />
@@ -1366,8 +1711,239 @@ const AdminDashboard = () => {
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.8rem' }}
             >
-              <Check size={18} /> Grant Worker Access
+              <Check size={18} /> {workerEditMode ? 'Save Worker Changes' : 'Grant Worker Access'}
             </button>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL 3: EDIT ORDER STATUS MODAL */}
+      {showOrderModal && selectedOrder && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 110,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={() => setShowOrderModal(false)}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(0,0,0,0.75)',
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+
+          <form
+            onSubmit={handleUpdateOrderSubmit}
+            className="glass-card"
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '460px',
+              padding: '2.5rem',
+              background: 'var(--bg-secondary)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <h3 style={{ fontSize: '1.3rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
+                Update Order #{selectedOrder._id}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowOrderModal(false)}
+                style={{ cursor: 'pointer', color: 'var(--text-secondary)' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.04)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Customer:</span>
+                <span style={{ color: '#fff', fontWeight: 600 }}>{selectedOrder.user?.name || 'Customer'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Total Amount:</span>
+                <span style={{ color: '#d91d49', fontWeight: 700 }}>₹{selectedOrder.totalPrice}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Order Date:</span>
+                <span style={{ color: 'var(--text-secondary)' }}>{new Date(selectedOrder.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.9rem', color: '#fff' }}>
+                <input
+                  type="checkbox"
+                  checked={editOrderPaid}
+                  onChange={(e) => setEditOrderPaid(e.target.checked)}
+                />
+                Payment Completed (isPaid)
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.9rem', color: '#fff' }}>
+                <input
+                  type="checkbox"
+                  checked={editOrderDelivered}
+                  onChange={(e) => setEditOrderDelivered(e.target.checked)}
+                />
+                Order Delivered / Dispatched (isDelivered)
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.8rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowOrderModal(false)}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ flex: 1.2 }}
+              >
+                <Check size={16} /> Save Status
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL 4: EDIT USER ACCOUNT MODAL */}
+      {showUserModal && selectedUser && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 110,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={() => setShowUserModal(false)}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(0,0,0,0.75)',
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+
+          <form
+            onSubmit={handleUpdateUserSubmit}
+            className="glass-card"
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '460px',
+              padding: '2.5rem',
+              background: 'var(--bg-secondary)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <h3 style={{ fontSize: '1.3rem', fontFamily: 'var(--font-headings)', color: '#fff' }}>
+                Edit Account: {selectedUser.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowUserModal(false)}
+                style={{ cursor: 'pointer', color: 'var(--text-secondary)' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Full Name</label>
+              <input
+                type="text"
+                required
+                className="input-field"
+                value={editUserName}
+                onChange={(e) => setEditUserName(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Email Address</label>
+              <input
+                type="email"
+                required
+                className="input-field"
+                value={editUserEmail}
+                onChange={(e) => setEditUserEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Loyalty Reward Points</label>
+              <input
+                type="number"
+                min="0"
+                className="input-field"
+                value={editUserLoyaltyPoints}
+                onChange={(e) => setEditUserLoyaltyPoints(e.target.value)}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem', borderRadius: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.875rem', color: '#fff', fontWeight: 600 }}>
+                <input
+                  type="checkbox"
+                  checked={editUserIsAdmin}
+                  onChange={(e) => setEditUserIsAdmin(e.target.checked)}
+                />
+                Grant Full Admin Privileges (isAdmin)
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.8rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowUserModal(false)}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ flex: 1.2 }}
+              >
+                <Check size={16} /> Save Changes
+              </button>
+            </div>
           </form>
         </div>
       )}

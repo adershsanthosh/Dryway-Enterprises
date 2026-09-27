@@ -24,6 +24,10 @@ import {
   Eye,
   EyeOff,
   Shield,
+  Edit2,
+  Trash2,
+  X,
+  Check,
 } from 'lucide-react';
 
 const ERPDashboard = () => {
@@ -44,6 +48,34 @@ const ERPDashboard = () => {
   const [showPOModal, setShowPOModal] = useState(false);
   const [showBatchModal, setShowBatchModal] = useState(false);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
+
+  // Edit Modal States & Form Fields
+  // Supplier Edit
+  const [showEditSupplierModal, setShowEditSupplierModal] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [editSuppName, setEditSuppName] = useState('');
+  const [editSuppCategory, setEditSuppCategory] = useState('Organic Produce Farm');
+  const [editSuppContact, setEditSuppContact] = useState('');
+  const [editSuppPhone, setEditSuppPhone] = useState('');
+  const [editSuppLocation, setEditSuppLocation] = useState('');
+
+  // Raw Material Edit
+  const [showEditRMModal, setShowEditRMModal] = useState(false);
+  const [selectedRM, setSelectedRM] = useState(null);
+  const [editRMName, setEditRMName] = useState('');
+  const [editRMCategory, setEditRMCategory] = useState('');
+  const [editRMStock, setEditRMStock] = useState('');
+  const [editRMUnit, setEditRMUnit] = useState('kg');
+  const [editRMUnitCost, setEditRMUnitCost] = useState('');
+  const [editRMReorder, setEditRMReorder] = useState('');
+
+  // Expense Edit
+  const [showEditExpenseModal, setShowEditExpenseModal] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [editExpCategory, setEditExpCategory] = useState('Raw Materials Procurement');
+  const [editExpDesc, setEditExpDesc] = useState('');
+  const [editExpAmount, setEditExpAmount] = useState('');
+  const [editExpStatus, setEditExpStatus] = useState('Paid');
 
   // ERP Password Change States
   const [erpCurrentPassword, setErpCurrentPassword] = useState('');
@@ -382,6 +414,221 @@ const ERPDashboard = () => {
     }
   };
 
+  // Edit & Delete Handlers for Suppliers
+  const openEditSupplierModal = (s) => {
+    setSelectedSupplier(s);
+    setEditSuppName(s.name || '');
+    setEditSuppCategory(s.category || 'Organic Produce Farm');
+    setEditSuppContact(s.contactPerson || '');
+    setEditSuppPhone(s.phone || '');
+    setEditSuppLocation(s.location || '');
+    setShowEditSupplierModal(true);
+  };
+
+  const handleUpdateSupplier = async (e) => {
+    e.preventDefault();
+    if (!selectedSupplier) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/suppliers/${selectedSupplier._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          name: editSuppName,
+          category: editSuppCategory,
+          contactPerson: editSuppContact,
+          phone: editSuppPhone,
+          location: editSuppLocation,
+        }),
+      });
+      if (res.ok) {
+        setShowEditSupplierModal(false);
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to update supplier');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteSupplier = async (id, name) => {
+    if (!window.confirm(`Are you sure you want to remove supplier "${name}"?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/suppliers/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to delete supplier');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Delete Handler for Purchase Orders
+  const handleDeletePO = async (id, poNumber) => {
+    if (!window.confirm(`Are you sure you want to delete Purchase Order ${poNumber}?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/purchase-orders/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to delete purchase order');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Delete Handler for Production Batches
+  const handleDeleteBatch = async (id, batchNumber) => {
+    if (!window.confirm(`Are you sure you want to delete batch ${batchNumber}?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/batches/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to delete batch');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Edit & Delete Handlers for Raw Materials
+  const openEditRMModal = (rm) => {
+    setSelectedRM(rm);
+    setEditRMName(rm.name || '');
+    setEditRMCategory(rm.category || '');
+    setEditRMStock(String(rm.stockQuantity || 0));
+    setEditRMUnit(rm.unit || 'kg');
+    setEditRMUnitCost(String(rm.unitCost || 0));
+    setEditRMReorder(String(rm.reorderLevel || 0));
+    setShowEditRMModal(true);
+  };
+
+  const handleUpdateRM = async (e) => {
+    e.preventDefault();
+    if (!selectedRM) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/raw-materials/${selectedRM._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          name: editRMName,
+          category: editRMCategory,
+          stockQuantity: Number(editRMStock),
+          unit: editRMUnit,
+          unitCost: Number(editRMUnitCost),
+          reorderLevel: Number(editRMReorder),
+        }),
+      });
+      if (res.ok) {
+        setShowEditRMModal(false);
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to update raw material');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteRM = async (id, name) => {
+    if (!window.confirm(`Are you sure you want to delete raw material "${name}" from warehouse records?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/raw-materials/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to delete raw material');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Edit & Delete Handlers for Operating Expenses
+  const openEditExpenseModal = (exp) => {
+    setSelectedExpense(exp);
+    setEditExpCategory(exp.category || 'Raw Materials Procurement');
+    setEditExpDesc(exp.description || '');
+    setEditExpAmount(String(exp.amount || 0));
+    setEditExpStatus(exp.status || 'Paid');
+    setShowEditExpenseModal(true);
+  };
+
+  const handleUpdateExpense = async (e) => {
+    e.preventDefault();
+    if (!selectedExpense) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/expenses/${selectedExpense._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({
+          category: editExpCategory,
+          description: editExpDesc,
+          amount: Number(editExpAmount),
+          status: editExpStatus,
+        }),
+      });
+      if (res.ok) {
+        setShowEditExpenseModal(false);
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to update expense');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleDeleteExpense = async (id, description) => {
+    if (!window.confirm(`Are you sure you want to delete expense "${description}"?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/erp/expenses/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        fetchERPData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to delete expense');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>Loading Dryway ERP System...</div>;
   }
@@ -609,9 +856,29 @@ const ERPDashboard = () => {
                 <div key={s._id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1.1rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
                     <h4 style={{ color: '#fff', fontSize: '0.95rem', margin: 0, fontWeight: 700 }}>{s.name}</h4>
-                    <span style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 700 }}>
-                      ★ {s.rating}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 700 }}>
+                        ★ {s.rating}
+                      </span>
+                      {userInfo?.isAdmin && (
+                        <>
+                          <button
+                            onClick={() => openEditSupplierModal(s)}
+                            style={{ background: 'none', border: 'none', color: '#2bbef9', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                            title="Edit Supplier"
+                          >
+                            <Edit2 size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSupplier(s._id, s.name)}
+                            style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                            title="Delete Supplier"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <p style={{ color: '#2bbef9', fontSize: '0.775rem', margin: '0 0 0.6rem 0' }}>{s.category}</p>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
@@ -674,16 +941,27 @@ const ERPDashboard = () => {
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem 0.6rem' }}>
-                        {po.status !== 'Received' ? (
-                          <button
-                            onClick={() => handleReceivePO(po._id)}
-                            style={{ background: '#22c55e', color: '#000', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem' }}
-                          >
-                            Mark Received
-                          </button>
-                        ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Stock Stocked</span>
-                        )}
+                        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                          {po.status !== 'Received' ? (
+                            <button
+                              onClick={() => handleReceivePO(po._id)}
+                              style={{ background: '#22c55e', color: '#000', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, fontSize: '0.75rem' }}
+                            >
+                              Mark Received
+                            </button>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Stock Stocked</span>
+                          )}
+                          {userInfo?.isAdmin && (
+                            <button
+                              onClick={() => handleDeletePO(po._id, po.poNumber)}
+                              style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                              title="Delete Purchase Order"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -718,18 +996,29 @@ const ERPDashboard = () => {
                       <span style={{ color: '#2bbef9', fontSize: '0.75rem', fontWeight: 700 }}>{b.batchNumber}</span>
                       <h4 style={{ color: '#fff', fontSize: '1rem', margin: '0.2rem 0 0 0', fontWeight: 700 }}>{b.productName}</h4>
                     </div>
-                    <span
-                      style={{
-                        background: b.status === 'Completed' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(234, 179, 8, 0.15)',
-                        color: b.status === 'Completed' ? '#22c55e' : '#eab308',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {b.status}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span
+                        style={{
+                          background: b.status === 'Completed' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                          color: b.status === 'Completed' ? '#22c55e' : '#eab308',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {b.status}
+                      </span>
+                      {userInfo?.isAdmin && (
+                        <button
+                          onClick={() => handleDeleteBatch(b._id, b.batchNumber)}
+                          style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                          title="Delete Batch Record"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div style={{ background: 'rgba(0,0,0,0.3)', padding: '0.8rem', borderRadius: '8px', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -786,6 +1075,7 @@ const ERPDashboard = () => {
                   <th style={{ padding: '0.6rem' }}>Unit Cost</th>
                   <th style={{ padding: '0.6rem' }}>Reorder Level</th>
                   <th style={{ padding: '0.75rem 0.6rem' }}>Status</th>
+                  <th style={{ padding: '0.75rem 0.6rem' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -808,6 +1098,28 @@ const ERPDashboard = () => {
                           Sufficient
                         </span>
                       )}
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                        {userInfo?.isAdmin && (
+                          <>
+                            <button
+                              onClick={() => openEditRMModal(rm)}
+                              style={{ background: 'none', border: 'none', color: '#2bbef9', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                              title="Edit Material"
+                            >
+                              <Edit2 size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteRM(rm._id, rm.name)}
+                              style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                              title="Delete Material"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1117,6 +1429,7 @@ const ERPDashboard = () => {
                   <th style={{ padding: '0.6rem' }}>Description</th>
                   <th style={{ padding: '0.6rem' }}>Amount</th>
                   <th style={{ padding: '0.6rem' }}>Status</th>
+                  <th style={{ padding: '0.6rem' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1130,6 +1443,28 @@ const ERPDashboard = () => {
                       <span style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
                         {exp.status}
                       </span>
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                        {userInfo?.isAdmin && (
+                          <>
+                            <button
+                              onClick={() => openEditExpenseModal(exp)}
+                              style={{ background: 'none', border: 'none', color: '#2bbef9', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                              title="Edit Expense"
+                            >
+                              <Edit2 size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteExpense(exp._id, exp.description)}
+                              style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', padding: '0.2rem', display: 'flex' }}
+                              title="Delete Expense"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1344,6 +1679,145 @@ const ERPDashboard = () => {
                 >
                   Set New Password
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 6: EDIT SUPPLIER */}
+      {showEditSupplierModal && selectedSupplier && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.2rem', color: '#fff', margin: 0 }}>Edit Supplier: {selectedSupplier.name}</h3>
+              <button type="button" onClick={() => setShowEditSupplierModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateSupplier} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Supplier Organization Name</label>
+                <input type="text" required className="input-field" value={editSuppName} onChange={(e) => setEditSuppName(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Category</label>
+                <select className="input-field" value={editSuppCategory} onChange={(e) => setEditSuppCategory(e.target.value)}>
+                  <option value="Organic Produce Farm">Organic Produce Farm</option>
+                  <option value="Spices & Herbs Plantation">Spices & Herbs Plantation</option>
+                  <option value="Packaging & Glassware Manufacturer">Packaging & Glassware Manufacturer</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Contact Person</label>
+                <input type="text" required className="input-field" value={editSuppContact} onChange={(e) => setEditSuppContact(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Phone Number</label>
+                <input type="text" required className="input-field" value={editSuppPhone} onChange={(e) => setEditSuppPhone(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Location / Farm Address</label>
+                <input type="text" className="input-field" value={editSuppLocation} onChange={(e) => setEditSuppLocation(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditSupplierModal(false)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}><Check size={16} /> Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 7: EDIT RAW MATERIAL */}
+      {showEditRMModal && selectedRM && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.2rem', color: '#fff', margin: 0 }}>Edit Raw Material: {selectedRM.name}</h3>
+              <button type="button" onClick={() => setShowEditRMModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateRM} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Material Name</label>
+                <input type="text" required className="input-field" value={editRMName} onChange={(e) => setEditRMName(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Category</label>
+                <input type="text" required className="input-field" value={editRMCategory} onChange={(e) => setEditRMCategory(e.target.value)} />
+              </div>
+              <div className="form-row-2col">
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Stock Quantity</label>
+                  <input type="number" required className="input-field" value={editRMStock} onChange={(e) => setEditRMStock(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Unit</label>
+                  <input type="text" required className="input-field" value={editRMUnit} onChange={(e) => setEditRMUnit(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-row-2col">
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Unit Cost (₹)</label>
+                  <input type="number" required className="input-field" value={editRMUnitCost} onChange={(e) => setEditRMUnitCost(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Reorder Threshold</label>
+                  <input type="number" required className="input-field" value={editRMReorder} onChange={(e) => setEditRMReorder(e.target.value)} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditRMModal(false)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}><Check size={16} /> Save Stock</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 8: EDIT EXPENSE */}
+      {showEditExpenseModal && selectedExpense && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.2rem', color: '#fff', margin: 0 }}>Edit Operating Expense</h3>
+              <button type="button" onClick={() => setShowEditExpenseModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateExpense} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Expense Category</label>
+                <select className="input-field" value={editExpCategory} onChange={(e) => setEditExpCategory(e.target.value)}>
+                  <option value="Raw Materials Procurement">Raw Materials Procurement</option>
+                  <option value="Dehydration Energy & Power">Dehydration Energy & Power</option>
+                  <option value="Workforce Payroll & Shifts">Workforce Payroll & Shifts</option>
+                  <option value="Packaging & Warehousing">Packaging & Warehousing</option>
+                  <option value="Logistics & Shipping">Logistics & Shipping</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Description</label>
+                <input type="text" required className="input-field" value={editExpDesc} onChange={(e) => setEditExpDesc(e.target.value)} />
+              </div>
+              <div className="form-row-2col">
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Amount (₹)</label>
+                  <input type="number" required className="input-field" value={editExpAmount} onChange={(e) => setEditExpAmount(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Status</label>
+                  <select className="input-field" value={editExpStatus} onChange={(e) => setEditExpStatus(e.target.value)}>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditExpenseModal(false)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}><Check size={16} /> Update Ledger</button>
               </div>
             </form>
           </div>

@@ -110,6 +110,38 @@ router.post('/suppliers', protect, staffOrAdmin, (req, res) => {
   res.status(201).json(newSupplier);
 });
 
+// @desc    Update Supplier
+// @route   PUT /api/erp/suppliers/:id
+router.put('/suppliers/:id', protect, staffOrAdmin, (req, res) => {
+  const supplier = inMemorySuppliers.find((s) => s._id === req.params.id);
+  if (!supplier) {
+    return res.status(404).json({ message: 'Supplier not found' });
+  }
+
+  const { name, category, contactPerson, phone, email, location, rating, status } = req.body;
+  if (name !== undefined) supplier.name = name;
+  if (category !== undefined) supplier.category = category;
+  if (contactPerson !== undefined) supplier.contactPerson = contactPerson;
+  if (phone !== undefined) supplier.phone = phone;
+  if (email !== undefined) supplier.email = email;
+  if (location !== undefined) supplier.location = location;
+  if (rating !== undefined) supplier.rating = Number(rating);
+  if (status !== undefined) supplier.status = status;
+
+  res.json(supplier);
+});
+
+// @desc    Delete Supplier
+// @route   DELETE /api/erp/suppliers/:id
+router.delete('/suppliers/:id', protect, staffOrAdmin, (req, res) => {
+  const index = inMemorySuppliers.findIndex((s) => s._id === req.params.id);
+  if (index !== -1) {
+    inMemorySuppliers.splice(index, 1);
+    return res.json({ message: 'Supplier removed successfully' });
+  }
+  res.status(404).json({ message: 'Supplier not found' });
+});
+
 // @desc    Get Purchase Orders
 // @route   GET /api/erp/purchase-orders
 router.get('/purchase-orders', protect, staffOrAdmin, (req, res) => {
@@ -193,6 +225,17 @@ router.put('/purchase-orders/:id/status', protect, staffOrAdmin, (req, res) => {
   res.json(po);
 });
 
+// @desc    Delete Purchase Order
+// @route   DELETE /api/erp/purchase-orders/:id
+router.delete('/purchase-orders/:id', protect, staffOrAdmin, (req, res) => {
+  const index = inMemoryPurchaseOrders.findIndex((p) => p._id === req.params.id);
+  if (index !== -1) {
+    inMemoryPurchaseOrders.splice(index, 1);
+    return res.json({ message: 'Purchase Order removed successfully' });
+  }
+  res.status(404).json({ message: 'Purchase Order not found' });
+});
+
 // ==================== RAW MATERIALS INVENTORY ====================
 
 // @desc    Get Raw Materials
@@ -222,6 +265,37 @@ router.post('/raw-materials', protect, staffOrAdmin, (req, res) => {
 
   inMemoryRawMaterials.unshift(newMaterial);
   res.status(201).json(newMaterial);
+});
+
+// @desc    Update Raw Material
+// @route   PUT /api/erp/raw-materials/:id
+router.put('/raw-materials/:id', protect, staffOrAdmin, (req, res) => {
+  const material = inMemoryRawMaterials.find((m) => m._id === req.params.id);
+  if (!material) {
+    return res.status(404).json({ message: 'Raw material not found' });
+  }
+
+  const { name, category, stockQuantity, unit, reorderLevel, unitCost } = req.body;
+  if (name !== undefined) material.name = name;
+  if (category !== undefined) material.category = category;
+  if (stockQuantity !== undefined) material.stockQuantity = Number(stockQuantity);
+  if (unit !== undefined) material.unit = unit;
+  if (reorderLevel !== undefined) material.reorderLevel = Number(reorderLevel);
+  if (unitCost !== undefined) material.unitCost = Number(unitCost);
+  material.lastUpdated = new Date().toISOString();
+
+  res.json(material);
+});
+
+// @desc    Delete Raw Material
+// @route   DELETE /api/erp/raw-materials/:id
+router.delete('/raw-materials/:id', protect, staffOrAdmin, (req, res) => {
+  const index = inMemoryRawMaterials.findIndex((m) => m._id === req.params.id);
+  if (index !== -1) {
+    inMemoryRawMaterials.splice(index, 1);
+    return res.json({ message: 'Raw material removed successfully' });
+  }
+  res.status(404).json({ message: 'Raw material not found' });
 });
 
 // ==================== PRODUCTION & BATCH PROCESSING ====================
@@ -319,6 +393,17 @@ router.put('/batches/:id', protect, staffOrAdmin, async (req, res) => {
   res.json(batch);
 });
 
+// @desc    Delete Production Batch
+// @route   DELETE /api/erp/batches/:id
+router.delete('/batches/:id', protect, staffOrAdmin, (req, res) => {
+  const index = inMemoryProductionBatches.findIndex((b) => b._id === req.params.id);
+  if (index !== -1) {
+    inMemoryProductionBatches.splice(index, 1);
+    return res.json({ message: 'Production batch removed successfully' });
+  }
+  res.status(404).json({ message: 'Production batch not found' });
+});
+
 // ==================== FINANCIAL EXPENSES & COSTING ====================
 
 // @desc    Get Operating Expenses
@@ -347,6 +432,34 @@ router.post('/expenses', protect, staffOrAdmin, (req, res) => {
 
   inMemoryExpenses.unshift(newExpense);
   res.status(201).json(newExpense);
+});
+
+// @desc    Update Operating Expense
+// @route   PUT /api/erp/expenses/:id
+router.put('/expenses/:id', protect, staffOrAdmin, (req, res) => {
+  const expense = inMemoryExpenses.find((e) => e._id === req.params.id);
+  if (!expense) {
+    return res.status(404).json({ message: 'Expense not found' });
+  }
+
+  const { category, description, amount, status } = req.body;
+  if (category !== undefined) expense.category = category;
+  if (description !== undefined) expense.description = description;
+  if (amount !== undefined) expense.amount = Number(amount);
+  if (status !== undefined) expense.status = status;
+
+  res.json(expense);
+});
+
+// @desc    Delete Operating Expense
+// @route   DELETE /api/erp/expenses/:id
+router.delete('/expenses/:id', protect, staffOrAdmin, (req, res) => {
+  const index = inMemoryExpenses.findIndex((e) => e._id === req.params.id);
+  if (index !== -1) {
+    inMemoryExpenses.splice(index, 1);
+    return res.json({ message: 'Expense removed successfully' });
+  }
+  res.status(404).json({ message: 'Expense not found' });
 });
 
 export default router;

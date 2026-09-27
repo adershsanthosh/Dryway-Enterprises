@@ -83,6 +83,29 @@ router.put('/:id/salary', protect, admin, async (req, res) => {
   res.json(sanitized);
 });
 
+// @desc    Update worker full details
+// @route   PUT /api/workers/:id
+// @access  Private/Admin
+router.put('/:id', protect, admin, async (req, res) => {
+  const { name, email, workerRole, monthlySalary, hourlyRate, shiftTiming, permissions } = req.body;
+  const worker = inMemoryUsers.find((u) => u._id === req.params.id);
+
+  if (!worker) {
+    return res.status(404).json({ message: 'Worker account not found' });
+  }
+
+  if (name !== undefined) worker.name = name;
+  if (email !== undefined) worker.email = email;
+  if (workerRole !== undefined) worker.workerRole = workerRole;
+  if (monthlySalary !== undefined) worker.monthlySalary = Number(monthlySalary);
+  if (hourlyRate !== undefined) worker.hourlyRate = Number(hourlyRate);
+  if (shiftTiming !== undefined) worker.shiftTiming = shiftTiming;
+  if (permissions !== undefined) worker.permissions = permissions;
+
+  const { password, ...sanitized } = worker;
+  res.json(sanitized);
+});
+
 // @desc    Remove worker access
 // @route   DELETE /api/workers/:id
 // @access  Private/Admin
