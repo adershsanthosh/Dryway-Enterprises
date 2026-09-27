@@ -38,7 +38,7 @@ const StaffPortal = () => {
 
   useEffect(() => {
     if (!userInfo || (!userInfo.isWorker && !userInfo.isAdmin)) {
-      navigate('/admin/login');
+      navigate('/login?redirect=staff');
     }
   }, [userInfo, navigate]);
 
@@ -55,7 +55,7 @@ const StaffPortal = () => {
 
       if (sessRes.status === 401 || payRes.status === 401) {
         localStorage.removeItem('userInfo');
-        window.location.href = '/admin/login';
+        window.location.href = '/login?redirect=staff';
         return;
       }
 
@@ -274,7 +274,7 @@ const StaffPortal = () => {
                   type="text"
                   placeholder="Task notes (e.g. Washing pineapples for Batch #102)..."
                   className="input-field"
-                  style={{ flex: 1, minWidth: '260px' }}
+                  style={{ flex: '1 1 200px', minWidth: 'min(100%, 200px)' }}
                   value={taskNote}
                   onChange={(e) => setTaskNote(e.target.value)}
                 />

@@ -92,9 +92,10 @@ const Wishlist = () => {
               <img
                 src={product.images[0]}
                 alt={product.title}
+                className="wishlist-item-img"
                 style={{
                   width: '100%',
-                  height: '220px',
+                  height: 'var(--product-img-height, 180px)',
                   objectFit: 'cover',
                 }}
               />

@@ -88,7 +88,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   <img
                     src={item.image}
                     alt={item.title}
-                    style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }}
+                    className="cart-item-img"
                   />
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>

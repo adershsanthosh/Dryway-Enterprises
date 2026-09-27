@@ -175,6 +175,7 @@ const MyOrders = () => {
                     <img
                       src={item.image}
                       alt={item.title}
+                      className="order-item-thumb"
                       style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px' }}
                     />
                     <div>

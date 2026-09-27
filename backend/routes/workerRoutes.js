@@ -95,6 +95,24 @@ router.delete('/:id', protect, admin, async (req, res) => {
   res.status(404).json({ message: 'Worker account not found' });
 });
 
+// @desc    Admin reset worker password
+// @route   PUT /api/workers/:id/password
+// @access  Private/Admin
+router.put('/:id/password', protect, admin, async (req, res) => {
+  const { newPassword } = req.body;
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({ message: 'New password must be at least 6 characters' });
+  }
+
+  const worker = inMemoryUsers.find((u) => u._id === req.params.id);
+  if (!worker) {
+    return res.status(404).json({ message: 'Worker account not found' });
+  }
+
+  worker.password = bcrypt.hashSync(newPassword, 10);
+  res.json({ message: `Password for ${worker.name} successfully updated` });
+});
+
 // ==================== WORKER SESSIONS & ATTENDANCE TRACKING ====================
 
 // @desc    Get all worker sessions (shift logs)

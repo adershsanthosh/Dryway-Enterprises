@@ -69,6 +69,31 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const changePassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo?.token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update password');
+      }
+      setLoading(false);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+      throw err;
+    }
+  };
+
   const logout = () => {
     setUserInfo(null);
     localStorage.removeItem('userInfo');
@@ -83,6 +108,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        changePassword,
         updateLoyaltyPoints,
         setError,
       }}

@@ -61,10 +61,10 @@ function AppContent() {
 
           {/* Standalone Admin, ERP & Staff Management Portals */}
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin-login" element={<Login />} />
           <Route path="/erp" element={<ERPPage />} />
-          <Route path="/erp/login" element={<AdminLogin />} />
+          <Route path="/erp/login" element={<Login />} />
           <Route path="/staff" element={<StaffPortal />} />
           <Route path="/staff/portal" element={<StaffPortal />} />
         </Routes>

@@ -161,14 +161,16 @@ const ProductDetails = () => {
         <ArrowLeft size={16} /> Back to Shop Catalog
       </Link>
 
-      <div className="checkout-grid" style={{ gap: '4rem', marginBottom: '4rem' }}>
+      <div className="product-details-grid" style={{ marginBottom: '4rem' }}>
         {/* Left: Product Images */}
         <div style={{ position: 'relative' }}>
           <img
             src={product.images[0]}
             alt={product.title}
+            className="product-detail-img"
             style={{
               width: '100%',
+              maxWidth: '100%',
               maxHeight: '480px',
               objectFit: 'cover',
               borderRadius: 'var(--radius-lg)',
@@ -226,7 +228,7 @@ const ProductDetails = () => {
             <span style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {product.category}
             </span>
-            <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem', lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem', lineHeight: 1.2 }}>
               {product.title}
             </h1>
           </div>
@@ -319,7 +321,7 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              <div style={{ flex: 1, minWidth: '200px', alignSelf: 'flex-end' }}>
+              <div style={{ flex: '1 1 200px', minWidth: 'min(100%, 200px)', alignSelf: 'flex-end' }}>
                 <button className="btn btn-primary" onClick={handleAddToBag} style={{ width: '100%', padding: '1rem', background: 'linear-gradient(135deg, #ea580c 0%, #d91d49 100%)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                   <ShoppingBag size={18} />
                   {t('addToBag')}

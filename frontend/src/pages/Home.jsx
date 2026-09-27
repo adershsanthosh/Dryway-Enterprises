@@ -116,7 +116,7 @@ const Home = () => {
           marginBottom: '3.5rem',
         }}
       >
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '3rem', alignItems: 'center' }}>
+        <div className="container hero-grid-responsive">
           <div>
             <div
               style={{
@@ -139,7 +139,7 @@ const Home = () => {
             </div>
             <h1
               style={{
-                fontSize: '3.5rem',
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                 lineHeight: 1.15,
                 marginBottom: '1.25rem',
                 fontFamily: 'var(--font-headings)',
@@ -180,7 +180,7 @@ const Home = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="hero-actions-row">
               <a href="#catalog" className="btn btn-primary" style={{ padding: '0.85rem 1.8rem' }}>
                 Explore Products
               </a>
@@ -191,33 +191,19 @@ const Home = () => {
           </div>
 
           {/* Hero Banner Visual Card */}
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <div className="hero-blur-bg" />
             <div
+              className="glass-card hero-banner-card"
               style={{
-                position: 'absolute',
-                width: '320px',
-                height: '320px',
-                background: 'rgba(217, 29, 73, 0.22)',
-                filter: 'blur(90px)',
-                zIndex: 0,
-              }}
-            />
-            <div
-              className="glass-card"
-              style={{
-                width: '100%',
-                maxWidth: '420px',
                 padding: '1.25rem',
-                position: 'relative',
-                zIndex: 1,
-                borderRadius: '16px',
-                border: '1px solid rgba(217, 29, 73, 0.3)',
               }}
             >
               <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '12px', height: '240px', marginBottom: '1rem' }}>
                 <img
                   src="https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&auto=format&fit=crop&q=80"
                   alt="Dry Way Dehydrated ABC Mix"
+                  className="hero-banner-img"
                   style={{
                     width: '100%',
                     height: '100%',
@@ -354,7 +340,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', width: '100%', maxWidth: '320px' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', width: '100%', maxWidth: 'min(100%, 360px)' }}>
             {/* Search Input */}
             <div style={{ position: 'relative', width: '100%' }}>
               <Search
@@ -508,6 +494,7 @@ const Home = () => {
                           <img
                             src={product.images[0]}
                             alt={product.title}
+                            className="product-card-img"
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
 

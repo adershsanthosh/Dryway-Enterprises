@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { KeyRound, Mail, Loader } from 'lucide-react';
+import { KeyRound, Mail, Loader, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login, userInfo, loading, error, setError } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -13,9 +14,21 @@ const Login = () => {
 
   const redirect = new URLSearchParams(location.search).get('redirect') || '';
 
+  const navigateByRole = (user) => {
+    if (redirect) {
+      navigate(redirect.startsWith('/') ? redirect : `/${redirect}`);
+    } else if (user?.isAdmin) {
+      navigate('/admin');
+    } else if (user?.isWorker) {
+      navigate('/staff');
+    } else {
+      navigate('/');
+    }
+  };
+
   useEffect(() => {
     if (userInfo) {
-      navigate(redirect ? `/${redirect}` : '/');
+      navigateByRole(userInfo);
     }
     setError(null);
   }, [userInfo, navigate, redirect, setError]);
@@ -23,9 +36,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const data = await login(email, password);
+      navigateByRole(data);
     } catch (err) {
-      // Logged in context
+      // Error handled by AuthContext
     }
   };
 
@@ -59,7 +73,7 @@ const Login = () => {
             Welcome Back
           </h2>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Sign in to access your orders & check out.
+            Sign in with your email & password to access your account.
           </p>
         </div>
 
@@ -82,7 +96,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label" htmlFor="email">Email Address</label>
             <div style={{ position: 'relative' }}>
               <Mail
                 size={18}
@@ -95,8 +109,11 @@ const Login = () => {
                 }}
               />
               <input
+                id="email"
+                name="email"
                 type="email"
                 required
+                autoComplete="username email"
                 className="input-field"
                 style={{ paddingLeft: '2.5rem' }}
                 placeholder="you@example.com"
@@ -107,7 +124,7 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="password">Password</label>
             <div style={{ position: 'relative' }}>
               <KeyRound
                 size={18}
@@ -120,14 +137,38 @@ const Login = () => {
                 }}
               />
               <input
-                type="password"
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete="current-password"
                 className="input-field"
-                style={{ paddingLeft: '2.5rem' }}
+                style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -157,12 +198,6 @@ const Login = () => {
             Create account
           </Link>
         </p>
-
-        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
-          <Link to="/admin/login" style={{ fontSize: '0.8rem', color: '#2bbef9', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-            🔐 Switch to Admin & Staff Portal Login
-          </Link>
-        </div>
       </div>
 
       <style>{`

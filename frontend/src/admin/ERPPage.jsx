@@ -10,7 +10,7 @@ const ERPPage = () => {
 
   useEffect(() => {
     if (!userInfo || (!userInfo.isAdmin && !userInfo.isWorker)) {
-      navigate('/admin/login');
+      navigate('/login?redirect=erp');
     }
   }, [userInfo, navigate]);
 

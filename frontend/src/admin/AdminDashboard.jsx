@@ -25,7 +25,8 @@ import {
   Play,
   Square,
   Sparkles,
-  Factory
+  Factory,
+  KeyRound,
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -111,7 +112,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!userInfo || (!userInfo.isAdmin && !userInfo.isWorker)) {
-      navigate('/admin/login');
+      navigate('/login?redirect=admin');
     }
   }, [userInfo, navigate]);
 
@@ -366,6 +367,34 @@ const AdminDashboard = () => {
     }
   };
 
+  // Handle Admin Worker Password Reset
+  const handleResetWorkerPassword = async (worker) => {
+    const newPass = window.prompt(`Enter new password for ${worker.name} (${worker.email}) - minimum 6 characters:`);
+    if (!newPass) return;
+    if (newPass.length < 6) {
+      alert('Password must be at least 6 characters long.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers/${worker._id}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({ newPassword: newPass }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || `Password for ${worker.name} reset successfully!`);
+      } else {
+        alert(data.message || 'Failed to reset password');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   // Handle Worker Clock In (Start Shift Session)
   const handleClockIn = async () => {
     setClockInLoading(true);
@@ -503,16 +532,16 @@ const AdminDashboard = () => {
               <Square size={16} /> Clock Out (End Shift)
             </button>
           ) : (
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
               <input
                 type="text"
                 placeholder="Shift notes (e.g. Stocking & Offers)..."
                 className="input-field"
-                style={{ width: '220px', height: '38px', fontSize: '0.825rem', background: 'rgba(255,255,255,0.05)' }}
+                style={{ flex: '1 1 180px', minWidth: 'min(100%, 180px)', height: '38px', fontSize: '0.825rem', background: 'rgba(255,255,255,0.05)' }}
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
               />
-              <button className="btn btn-primary" onClick={handleClockIn} disabled={clockInLoading} style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}>
+              <button className="btn btn-primary" onClick={handleClockIn} disabled={clockInLoading} style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
                 <Play size={16} /> Clock In (Start Shift)
               </button>
             </div>
@@ -641,6 +670,7 @@ const AdminDashboard = () => {
                         <img
                           src={product.images[0]}
                           alt={product.title}
+                          className="order-item-thumb"
                           style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '6px' }}
                         />
                       </td>
@@ -713,7 +743,7 @@ const AdminDashboard = () => {
                 }}
               >
                 <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                  <img src={product.images[0]} alt={product.title} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px' }} />
+                  <img src={product.images[0]} alt={product.title} className="order-item-thumb" style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px' }} />
                   <div>
                     <h4 style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600 }}>{product.title}</h4>
                     <span style={{ fontSize: '0.75rem', color: '#2bbef9' }}>{product.category}</span>
@@ -794,7 +824,7 @@ const AdminDashboard = () => {
                   <th style={{ padding: '0.75rem 1rem' }}>Monthly Salary</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Hourly Rate</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Permissions</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Salary Action</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Staff Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -821,15 +851,27 @@ const AdminDashboard = () => {
                       </div>
                     </td>
                     <td style={{ padding: '0.75rem 1rem' }}>
-                      {userInfo?.isAdmin && (
-                        <button
-                          onClick={() => handlePayoutSalary(worker)}
-                          className="btn btn-secondary"
-                          style={{ fontSize: '0.75rem', padding: '0.3rem 0.7rem', borderColor: '#22c55e', color: '#22c55e' }}
-                        >
-                          Payout Salary
-                        </button>
-                      )}
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {userInfo?.isAdmin && (
+                          <button
+                            onClick={() => handlePayoutSalary(worker)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#22c55e', color: '#22c55e' }}
+                          >
+                            Payout Salary
+                          </button>
+                        )}
+                        {userInfo?.isAdmin && (
+                          <button
+                            onClick={() => handleResetWorkerPassword(worker)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', borderColor: '#f59e0b', color: '#f59e0b', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                            title="Reset staff password"
+                          >
+                            <KeyRound size={12} /> Password
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1026,7 +1068,7 @@ const AdminDashboard = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-row-2col">
               <div className="form-group">
                 <label className="form-label">Regular Price (₹)</label>
                 <input
@@ -1051,7 +1093,7 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', background: 'rgba(217, 29, 73, 0.08)', padding: '0.8rem', borderRadius: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem', background: 'rgba(217, 29, 73, 0.08)', padding: '0.8rem', borderRadius: '8px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', color: '#fff', fontWeight: 600 }}>
                 <input
                   type="checkbox"
@@ -1073,7 +1115,7 @@ const AdminDashboard = () => {
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1rem' }}>
+            <div className="form-row-2col">
               <div className="form-group">
                 <label className="form-label">Dryway Category</label>
                 <select
@@ -1133,7 +1175,8 @@ const AdminDashboard = () => {
                 <img
                   src={image}
                   alt="Product Preview"
-                  style={{ width: '130px', height: '130px', objectFit: 'cover', borderRadius: '8px', border: '2px solid #d91d49', display: 'block', margin: '0 auto' }}
+                  className="preview-image"
+                  style={{ width: '130px', height: '130px', maxWidth: '100%', objectFit: 'cover', borderRadius: '8px', border: '2px solid #d91d49', display: 'block', margin: '0 auto' }}
                 />
               </div>
             )}
@@ -1268,7 +1311,7 @@ const AdminDashboard = () => {
               </select>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '1rem' }}>
+            <div className="form-row-2col" style={{ marginBottom: '1rem' }}>
               <div>
                 <label className="form-label">Monthly Salary (₹)</label>
                 <input
@@ -1298,7 +1341,7 @@ const AdminDashboard = () => {
                 Assign Worker Access Permissions:
               </span>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', fontSize: '0.8rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '0.8rem', fontSize: '0.8rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
                   <input type="checkbox" checked={canEditPrices} onChange={(e) => setCanEditPrices(e.target.checked)} />
                   Can Edit Prices

@@ -173,14 +173,7 @@ const Checkout = () => {
             />
           </div>
 
-          <div
-            className="form-row-2col"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '1rem',
-            }}
-          >
+          <div className="form-row-2col">
             <div className="form-group">
               <label className="form-label">City</label>
               <input
@@ -360,6 +353,7 @@ const Checkout = () => {
                   <img
                     src={item.image}
                     alt={item.title}
+                    className="order-item-thumb"
                     style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }}
                   />
                   <div>

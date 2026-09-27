@@ -60,6 +60,7 @@ const Navbar = ({ onCartOpen }) => {
           <img
             src="/logo.jpg"
             alt="Dryway Logo"
+            className="brand-logo-img"
             style={{
               height: '38px',
               borderRadius: '20px',
@@ -211,6 +212,50 @@ const Navbar = ({ onCartOpen }) => {
                   <Award size={14} />
                   <span>{userInfo.loyaltyPoints || 0} Pts</span>
                 </Link>
+
+                {userInfo.isAdmin && (
+                  <Link
+                    to="/admin"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      background: 'linear-gradient(135deg, #d91d49 0%, #ea2b0f 100%)',
+                      color: '#fff',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: '12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      boxShadow: '0 2px 8px rgba(217, 29, 73, 0.35)',
+                    }}
+                    title="Launch Enterprise Admin & ERP Suite"
+                  >
+                    <ShieldAlert size={13} />
+                    <span>Admin ERP</span>
+                  </Link>
+                )}
+
+                {userInfo.isWorker && !userInfo.isAdmin && (
+                  <Link
+                    to="/staff"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      background: '#0284c7',
+                      color: '#fff',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: '12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                    title="Staff Shift Portal"
+                  >
+                    <span>Staff Portal</span>
+                  </Link>
+                )}
 
                 <button
                   onClick={handleLogout}
@@ -395,6 +440,49 @@ const Navbar = ({ onCartOpen }) => {
                 <Package size={16} />
                 <span>My Orders</span>
               </Link>
+
+              {userInfo.isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={closeMobileMenu}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'linear-gradient(135deg, #d91d49 0%, #ea2b0f 100%)',
+                    color: '#fff',
+                    padding: '0.5rem 0.8rem',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  <ShieldAlert size={16} />
+                  <span>Launch Admin & ERP Portal</span>
+                </Link>
+              )}
+
+              {userInfo.isWorker && !userInfo.isAdmin && (
+                <Link
+                  to="/staff"
+                  onClick={closeMobileMenu}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: '#0284c7',
+                    color: '#fff',
+                    padding: '0.5rem 0.8rem',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  <span>Staff Portal</span>
+                </Link>
+              )}
 
               <button
                 onClick={handleLogout}

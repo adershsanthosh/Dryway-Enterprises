@@ -149,12 +149,12 @@ const OrderDetails = () => {
         </div>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
         <div>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Order ID: <code>{order._id}</code>
           </span>
-          <h1 style={{ fontSize: '2.25rem', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+          <h1 style={{ fontSize: 'clamp(1.6rem, 5vw, 2.25rem)', fontFamily: 'var(--font-headings)', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
             Order Details
           </h1>
         </div>
@@ -260,6 +260,7 @@ const OrderDetails = () => {
                     <img
                       src={item.image}
                       alt={item.title}
+                      className="order-item-thumb"
                       style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }}
                     />
                     <div>

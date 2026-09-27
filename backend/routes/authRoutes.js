@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
 import {
@@ -8,6 +9,7 @@ import {
   findUserById,
   createInMemoryUser,
   matchInMemoryPassword,
+  updateInMemoryUserPassword,
 } from '../utils/inMemoryStore.js';
 
 const router = express.Router();
@@ -147,6 +149,8 @@ router.post('/login', async (req, res) => {
 
 // @desc    Get user profile
 // @route   GET /api/auth/profile
+// @desc    Get user profile
+// @route   GET /api/auth/profile
 // @access  Private
 router.get('/profile', protect, async (req, res) => {
   try {
@@ -176,6 +180,116 @@ router.get('/profile', protect, async (req, res) => {
     }
     return res.status(404).json({ message: 'User not found' });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Change user password (for website & ERP)
+// @route   PUT /api/auth/change-password
+// @access  Private
+router.put('/change-password', protect, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Please provide both current and new password' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+  }
+
+  try {
+    if (isDbConnected()) {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const isMatch = await user.matchPassword(currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+
+      user.password = newPassword;
+      await user.save();
+
+      return res.json({ message: 'Password updated successfully' });
+    } else {
+      // In-Memory store fallback
+      const user = await findUserById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const isMatch = await matchInMemoryPassword(user, currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      await updateInMemoryUserPassword(req.user._id, hashedPassword);
+
+      return res.json({ message: 'Password updated successfully' });
+    }
+  } catch (error) {
+    console.error('Change Password Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Update user profile & optional password
+// @route   PUT /api/auth/profile
+// @access  Private
+router.put('/profile', protect, async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    if (isDbConnected()) {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.name = name || user.name;
+      user.email = email || user.email;
+      if (password) {
+        user.password = password;
+      }
+      const updatedUser = await user.save();
+
+      return res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+        loyaltyPoints: updatedUser.loyaltyPoints || 0,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      const user = await findUserById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.name = name || user.name;
+      user.email = email || user.email;
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+      }
+
+      return res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        loyaltyPoints: user.loyaltyPoints || 0,
+        token: generateToken(user._id),
+      });
+    }
+  } catch (error) {
+    console.error('Update Profile Error:', error);
     res.status(500).json({ message: error.message });
   }
 });

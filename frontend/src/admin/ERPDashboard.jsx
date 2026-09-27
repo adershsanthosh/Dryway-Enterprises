@@ -19,10 +19,15 @@ import {
   Thermometer,
   ShieldCheck,
   ChevronRight,
+  KeyRound,
+  Lock,
+  Eye,
+  EyeOff,
+  Shield,
 } from 'lucide-react';
 
 const ERPDashboard = () => {
-  const { userInfo } = useContext(AuthContext);
+  const { userInfo, changePassword } = useContext(AuthContext);
 
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [metrics, setMetrics] = useState(null);
@@ -39,6 +44,23 @@ const ERPDashboard = () => {
   const [showPOModal, setShowPOModal] = useState(false);
   const [showBatchModal, setShowBatchModal] = useState(false);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
+
+  // ERP Password Change States
+  const [erpCurrentPassword, setErpCurrentPassword] = useState('');
+  const [erpNewPassword, setErpNewPassword] = useState('');
+  const [erpConfirmPassword, setErpConfirmPassword] = useState('');
+  const [showErpCurrentPw, setShowErpCurrentPw] = useState(false);
+  const [showErpNewPw, setShowErpNewPw] = useState(false);
+  const [showErpConfirmPw, setShowErpConfirmPw] = useState(false);
+  const [erpPwLoading, setErpPwLoading] = useState(false);
+  const [erpPwSuccess, setErpPwSuccess] = useState(false);
+  const [erpPwError, setErpPwError] = useState('');
+
+  // Workers for Admin Password Reset in ERP
+  const [staffAccounts, setStaffAccounts] = useState([]);
+  const [selectedStaffForReset, setSelectedStaffForReset] = useState(null);
+  const [staffNewPassword, setStaffNewPassword] = useState('');
+  const [staffResetMsg, setStaffResetMsg] = useState('');
 
   // Form inputs for Supplier
   const [suppName, setSuppName] = useState('');
@@ -102,8 +124,26 @@ const ERPDashboard = () => {
     }
   };
 
+  const fetchStaffAccounts = async () => {
+    if (!userInfo || !userInfo.token) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setStaffAccounts(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error('Staff fetch error:', err);
+    }
+  };
+
   useEffect(() => {
     fetchERPData();
+    if (userInfo?.isAdmin) {
+      fetchStaffAccounts();
+    }
   }, [userInfo]);
 
   // Handlers for Submissions
@@ -283,6 +323,65 @@ const ERPDashboard = () => {
     }
   };
 
+  const handleErpPasswordChange = async (e) => {
+    e.preventDefault();
+    setErpPwError('');
+    setErpPwSuccess(false);
+
+    if (erpNewPassword.length < 6) {
+      setErpPwError('New password must be at least 6 characters long.');
+      return;
+    }
+
+    if (erpNewPassword !== erpConfirmPassword) {
+      setErpPwError('New password and confirmation do not match.');
+      return;
+    }
+
+    setErpPwLoading(true);
+    try {
+      await changePassword(erpCurrentPassword, erpNewPassword);
+      setErpPwSuccess(true);
+      setErpCurrentPassword('');
+      setErpNewPassword('');
+      setErpConfirmPassword('');
+      setTimeout(() => setErpPwSuccess(false), 5000);
+    } catch (err) {
+      setErpPwError(err.message || 'Failed to update password. Verify current password.');
+    } finally {
+      setErpPwLoading(false);
+    }
+  };
+
+  const handleResetStaffPassword = async (e) => {
+    e.preventDefault();
+    if (!selectedStaffForReset || staffNewPassword.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers/${selectedStaffForReset._id}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+        body: JSON.stringify({ newPassword: staffNewPassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStaffResetMsg(`Password updated for ${selectedStaffForReset.name}!`);
+        setSelectedStaffForReset(null);
+        setStaffNewPassword('');
+        setTimeout(() => setStaffResetMsg(''), 4000);
+      } else {
+        alert(data.message || 'Failed to update staff password');
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>Loading Dryway ERP System...</div>;
   }
@@ -350,6 +449,7 @@ const ERPDashboard = () => {
           { id: 'production', label: 'Dehydration & Batches', icon: <Factory size={16} /> },
           { id: 'materials', label: 'Raw Materials Inventory', icon: <Layers size={16} /> },
           { id: 'finance', label: 'Expense & COGS Accounting', icon: <DollarSign size={16} /> },
+          { id: 'security', label: 'ERP Security & Password', icon: <KeyRound size={16} /> },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -717,7 +817,283 @@ const ERPDashboard = () => {
         </div>
       )}
 
-      {/* SUB-TAB 5: FINANCIAL EXPENSE & COGS ACCOUNTING */}
+      {/* SUB-TAB 6: ERP SECURITY & PASSWORD MANAGEMENT */}
+      {activeSubTab === 'security' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {staffResetMsg && (
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.15)',
+                border: '1px solid #22c55e',
+                color: '#22c55e',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                fontWeight: 600,
+              }}
+            >
+              <CheckCircle2 size={18} />
+              <span>{staffResetMsg}</span>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', alignItems: 'flex-start' }}>
+            {/* ERP User Password Change Card */}
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                <div style={{ background: 'rgba(217, 29, 73, 0.15)', color: '#d91d49', padding: '0.5rem', borderRadius: '8px', display: 'flex' }}>
+                  <KeyRound size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', color: '#fff', margin: 0, fontFamily: 'var(--font-headings)' }}>
+                    Change ERP Account Password
+                  </h3>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    Signed in as: <strong style={{ color: '#38bdf8' }}>{userInfo?.email}</strong>
+                  </span>
+                </div>
+              </div>
+
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', marginTop: '0.8rem' }}>
+                Update your enterprise credentials for access to the ERP management system and store operations.
+              </p>
+
+              {erpPwSuccess && (
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.15)',
+                    border: '1px solid #22c55e',
+                    color: '#22c55e',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    marginBottom: '1.25rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <CheckCircle2 size={18} />
+                  <span>ERP Password updated successfully!</span>
+                </div>
+              )}
+
+              {erpPwError && (
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid var(--error)',
+                    color: 'var(--error)',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    marginBottom: '1.25rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <AlertTriangle size={18} />
+                  <span>{erpPwError}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleErpPasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Current ERP Password</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showErpCurrentPw ? 'text' : 'password'}
+                      required
+                      className="input-field"
+                      style={{ paddingRight: '2.5rem' }}
+                      placeholder="Enter current password"
+                      value={erpCurrentPassword}
+                      onChange={(e) => setErpCurrentPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowErpCurrentPw(!showErpCurrentPw)}
+                      tabIndex={-1}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'flex',
+                      }}
+                    >
+                      {showErpCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>New ERP Password (min 6 chars)</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showErpNewPw ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      className="input-field"
+                      style={{ paddingRight: '2.5rem' }}
+                      placeholder="Enter new secure password"
+                      value={erpNewPassword}
+                      onChange={(e) => setErpNewPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowErpNewPw(!showErpNewPw)}
+                      tabIndex={-1}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'flex',
+                      }}
+                    >
+                      {showErpNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Confirm New Password</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showErpConfirmPw ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      className="input-field"
+                      style={{ paddingRight: '2.5rem' }}
+                      placeholder="Re-enter new password"
+                      value={erpConfirmPassword}
+                      onChange={(e) => setErpConfirmPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowErpConfirmPw(!showErpConfirmPw)}
+                      tabIndex={-1}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'flex',
+                      }}
+                    >
+                      {showErpConfirmPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={erpPwLoading || !erpCurrentPassword || !erpNewPassword || !erpConfirmPassword}
+                  style={{ padding: '0.75rem', marginTop: '0.5rem', justifyContent: 'center' }}
+                >
+                  {erpPwLoading ? 'Updating ERP Credentials...' : 'Save New ERP Password'}
+                </button>
+              </form>
+            </div>
+
+            {/* Enterprise Security Architecture Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="glass-card" style={{ padding: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
+                  <Shield size={20} color="#22c55e" />
+                  <h4 style={{ margin: 0, fontSize: '1.05rem', color: '#fff' }}>Enterprise Security Standards</h4>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <span>Encryption Protocol:</span>
+                    <strong style={{ color: '#22c55e' }}>Bcrypt (10 Salt Rounds)</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <span>Session Token:</span>
+                    <strong style={{ color: '#2bbef9' }}>JWT Signed (30-day Validity)</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <span>Unified Authentication:</span>
+                    <strong style={{ color: '#f59e0b' }}>Role-Based Auto Redirection</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0' }}>
+                    <span>Protected Endpoints:</span>
+                    <strong style={{ color: '#fff' }}>Website, ERP, Procurement, Payroll</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Workforce Password Management for Master Admin */}
+              {userInfo?.isAdmin && staffAccounts.length > 0 && (
+                <div className="glass-card" style={{ padding: '1.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <UserCheck size={18} color="#f59e0b" />
+                      <h4 style={{ margin: 0, fontSize: '1.05rem', color: '#fff' }}>Workforce Staff Credentials</h4>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Admin Reset Capability</span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {staffAccounts.map((worker) => (
+                      <div
+                        key={worker._id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '0.6rem 0.8rem',
+                          background: 'rgba(255,255,255,0.03)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                        }}
+                      >
+                        <div>
+                          <strong style={{ color: '#fff', fontSize: '0.85rem', display: 'block' }}>{worker.name}</strong>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{worker.email} • {worker.workerRole}</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedStaffForReset(worker);
+                            setStaffNewPassword('');
+                          }}
+                          className="btn btn-secondary"
+                          style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem', borderColor: '#f59e0b', color: '#f59e0b' }}
+                        >
+                          <KeyRound size={12} /> Reset Password
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {activeSubTab === 'finance' && (
         <div className="glass-card" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
@@ -765,8 +1141,8 @@ const ERPDashboard = () => {
 
       {/* MODAL 1: ADD SUPPLIER */}
       {showSupplierModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div className="glass-card animate-scale-up" style={{ width: '450px', padding: '1.75rem', position: 'relative' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '1rem' }}>Add Farm / Raw Supplier</h3>
             <form onSubmit={handleAddSupplier} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               <div>
@@ -804,8 +1180,8 @@ const ERPDashboard = () => {
 
       {/* MODAL 2: CREATE PURCHASE ORDER */}
       {showPOModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div className="glass-card animate-scale-up" style={{ width: '480px', padding: '1.75rem', position: 'relative' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '1rem' }}>Create Raw Procurement PO</h3>
             <form onSubmit={handleCreatePO} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               <div>
@@ -820,7 +1196,7 @@ const ERPDashboard = () => {
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Raw Material Item Name</label>
                 <input type="text" required className="input-field" value={poItemName} onChange={(e) => setPoItemName(e.target.value)} placeholder="e.g. Fresh Grade-A Organic Pineapples" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+              <div className="form-row-2col">
                 <div>
                   <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Quantity (kg / pcs)</label>
                   <input type="number" required className="input-field" value={poItemQty} onChange={(e) => setPoItemQty(e.target.value)} placeholder="300" />
@@ -845,8 +1221,8 @@ const ERPDashboard = () => {
 
       {/* MODAL 3: START DEHYDRATION BATCH */}
       {showBatchModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div className="glass-card animate-scale-up" style={{ width: '480px', padding: '1.75rem', position: 'relative' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '1rem' }}>Start Dehydration Batch</h3>
             <form onSubmit={handleCreateBatch} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               <div>
@@ -857,7 +1233,7 @@ const ERPDashboard = () => {
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Raw Material Input</label>
                 <input type="text" required className="input-field" value={batchRawMaterial} onChange={(e) => setBatchRawMaterial(e.target.value)} placeholder="Fresh Grade-A Organic Pineapples" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+              <div className="form-row-2col">
                 <div>
                   <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Input Raw Weight (kg)</label>
                   <input type="number" required className="input-field" value={batchRawQty} onChange={(e) => setBatchRawQty(e.target.value)} placeholder="100" />
@@ -867,7 +1243,7 @@ const ERPDashboard = () => {
                   <input type="number" required className="input-field" value={batchTargetYield} onChange={(e) => setBatchTargetYield(e.target.value)} placeholder="12" />
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+              <div className="form-row-2col">
                 <div>
                   <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Temp (°C)</label>
                   <input type="number" className="input-field" value={batchTemp} onChange={(e) => setBatchTemp(e.target.value)} placeholder="60" />
@@ -888,8 +1264,8 @@ const ERPDashboard = () => {
 
       {/* MODAL 4: LOG EXPENSE */}
       {showExpenseModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div className="glass-card animate-scale-up" style={{ width: '450px', padding: '1.75rem', position: 'relative' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '480px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '1rem' }}>Log Operating Expense</h3>
             <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               <div>
@@ -913,6 +1289,61 @@ const ERPDashboard = () => {
               <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowExpenseModal(false)} style={{ flex: 1 }}>Cancel</button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Record Expense</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 5: RESET STAFF PASSWORD */}
+      {selectedStaffForReset && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem', overflowY: 'auto' }}>
+          <div className="glass-card animate-scale-up modal-responsive" style={{ width: '100%', maxWidth: '420px', padding: '2rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
+              <div style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', padding: '0.5rem', borderRadius: '8px', display: 'flex' }}>
+                <KeyRound size={20} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', color: '#fff', margin: 0 }}>Reset Staff Password</h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  For: <strong style={{ color: '#fff' }}>{selectedStaffForReset.name}</strong> ({selectedStaffForReset.email})
+                </span>
+              </div>
+            </div>
+
+            <form onSubmit={handleResetStaffPassword} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>New Temporary / Permanent Password</label>
+                <input
+                  type="text"
+                  required
+                  minLength={6}
+                  className="input-field"
+                  value={staffNewPassword}
+                  onChange={(e) => setStaffNewPassword(e.target.value)}
+                  placeholder="Min 6 characters (e.g. worker2026)"
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setSelectedStaffForReset(null);
+                    setStaffNewPassword('');
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ flex: 1.2, background: '#f59e0b', borderColor: '#f59e0b', color: '#000', fontWeight: 700 }}
+                >
+                  Set New Password
+                </button>
               </div>
             </form>
           </div>

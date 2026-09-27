@@ -360,6 +360,15 @@ export const matchInMemoryPassword = async (user, enteredPassword) => {
   return bcrypt.compareSync(enteredPassword, user.password);
 };
 
+export const updateInMemoryUserPassword = async (id, newHashedPassword) => {
+  const user = inMemoryUsers.find((u) => u._id.toString() === id.toString());
+  if (user) {
+    user.password = newHashedPassword;
+    return true;
+  }
+  return false;
+};
+
 // Helper functions for Orders
 export const createInMemoryOrder = async (orderData) => {
   const newOrder = {
