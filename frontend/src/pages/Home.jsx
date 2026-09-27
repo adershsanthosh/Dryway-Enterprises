@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
@@ -14,7 +14,6 @@ import {
   Flame, 
   HeartPulse, 
   Utensils, 
-  ExternalLink,
   Award,
   Clock,
   Leaf,
@@ -27,6 +26,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState('featured');
 
   const { addToCart } = useContext(CartContext);
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
@@ -49,60 +49,66 @@ const Home = () => {
   }, []);
 
   const categories = [
-    'All',
-    'Healthy Snacks & Dry Fruits',
-    'Kitchen Revolution',
-    'Ready to Cook Kits',
-    'Wellness & Superfoods',
-    'Chocolates & Healthy Bars'
+    { name: 'All', icon: '✨' },
+    { name: 'Healthy Snacks & Dry Fruits', icon: '🍓' },
+    { name: 'Kitchen Revolution', icon: '🍳' },
+    { name: 'Ready to Cook Kits', icon: '🍲' },
+    { name: 'Wellness & Superfoods', icon: '🌿' },
+    { name: 'Chocolates & Healthy Bars', icon: '🍫' }
   ];
 
-  const filteredProducts = products.filter((p) => {
-    const matchesSearch =
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      selectedCategory === 'All' || p.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const categoryCounts = useMemo(() => {
+    const counts = { All: products.length };
+    products.forEach((p) => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    let result = products.filter((p) => {
+      const matchesSearch =
+        (p.title || '').toLowerCase().includes(search.toLowerCase()) ||
+        (p.description || '').toLowerCase().includes(search.toLowerCase()) ||
+        (p.category || '').toLowerCase().includes(search.toLowerCase());
+      const matchesCategory =
+        selectedCategory === 'All' || p.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+
+    if (sortBy === 'price-low') {
+      result = [...result].sort((a, b) => (a.offerPrice || a.price) - (b.offerPrice || b.price));
+    } else if (sortBy === 'price-high') {
+      result = [...result].sort((a, b) => (b.offerPrice || b.price) - (a.offerPrice || a.price));
+    } else if (sortBy === 'name') {
+      result = [...result].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    }
+
+    return result;
+  }, [products, search, selectedCategory, sortBy]);
 
   return (
     <div className="animate-fade-in">
-      {/* Official Website Top Banner */}
+      {/* Official Announcement Banner */}
       <div 
         style={{ 
           background: 'linear-gradient(90deg, #d91d49 0%, #ea2b0f 100%)',
           color: '#fff', 
           padding: '0.65rem 1rem', 
           textAlign: 'center', 
-          fontSize: '0.85rem', 
+          fontSize: 'clamp(0.75rem, 2vw, 0.85rem)', 
           fontWeight: 600,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          flexWrap: 'wrap',
           gap: '0.5rem',
-          boxShadow: '0 2px 8px rgba(217, 29, 73, 0.25)'
+          boxShadow: '0 2px 8px rgba(217, 29, 73, 0.25)',
+          lineHeight: 1.4
         }}
       >
-        <Sparkles size={16} />
-        <span>Welcome to the Official Store of <strong>The Dry Way</strong> – Delicious & Yummy 100% Natural Dehydrated Foods!</span>
-        <a 
-          href="https://thedryway.com" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{ 
-            color: '#fff', 
-            textDecoration: 'underline', 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '0.2rem',
-            marginLeft: '0.5rem',
-            fontWeight: 700
-          }}
-        >
-          thedryway.com <ExternalLink size={12} />
-        </a>
+        <Sparkles size={16} style={{ flexShrink: 0 }} />
+        <span>Welcome to <strong>The Dry Way</strong> – Delicious & 100% Pure Natural Dehydrated Foods • Free Pan-India Delivery on orders over ₹499!</span>
       </div>
 
       {/* Premium Hero Section */}
@@ -184,8 +190,8 @@ const Home = () => {
               <a href="#catalog" className="btn btn-primary" style={{ padding: '0.85rem 1.8rem' }}>
                 Explore Products
               </a>
-              <a href="https://thedryway.com" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '0.85rem 1.8rem' }}>
-                Official Website
+              <a href="#collections" className="btn btn-secondary" style={{ padding: '0.85rem 1.8rem' }}>
+                Our Collections
               </a>
             </div>
           </div>
@@ -201,8 +207,8 @@ const Home = () => {
             >
               <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '12px', height: '240px', marginBottom: '1rem' }}>
                 <img
-                  src="https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&auto=format&fit=crop&q=80"
-                  alt="Dry Way Dehydrated ABC Mix"
+                  src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&auto=format&fit=crop&q=80"
+                  alt="Dry Way Crunchy Dehydrated Strawberries"
                   className="hero-banner-img"
                   style={{
                     width: '100%',
@@ -211,20 +217,20 @@ const Home = () => {
                   }}
                 />
                 <span style={{ position: 'absolute', top: '12px', left: '12px', background: '#d91d49', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '0.25rem 0.6rem', borderRadius: '4px' }}>
-                  FEATURED WELLNESS
+                  BESTSELLER • 100% PURE
                 </span>
               </div>
               <div>
                 <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.2rem', marginBottom: '0.3rem', color: '#fff' }}>
-                  Dehydrated ABC Miracle Mix
+                  Crunchy Dehydrated Strawberries
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.8rem' }}>
-                  Apple, Beetroot & Carrot pure power mix. 100% natural blood & immunity boost.
+                  Farm-fresh, crisp sweet strawberries dehydrated at peak ripeness. Nutrient dense with zero added sugar.
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#d91d49' }}>₹349.00</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem', textDecoration: 'line-through' }}>₹450</span>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#d91d49' }}>₹290.00</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem', textDecoration: 'line-through' }}>₹350</span>
                   </div>
                   <a href="#catalog" className="btn btn-primary" style={{ padding: '0.4rem 0.9rem', fontSize: '0.8rem' }}>
                     View Catalog
@@ -237,7 +243,7 @@ const Home = () => {
       </section>
 
       {/* Dry Way Product Collections Overview Banner */}
-      <section className="container" style={{ marginBottom: '4rem' }}>
+      <section id="collections" className="container" style={{ marginBottom: '4rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
           <div 
             onClick={() => setSelectedCategory('Healthy Snacks & Dry Fruits')}
@@ -312,7 +318,7 @@ const Home = () => {
               <HeartPulse size={20} />
             </div>
             <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Wellness Superfoods</h4>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ABC mix, Moringa powder, Green Jackfruit flour, Spirulina & Sea Moss.</p>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Moringa powder, Green Jackfruit flour, Beetroot, Spirulina & Sea Moss.</p>
           </div>
         </div>
       </section>
@@ -340,9 +346,9 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', width: '100%', maxWidth: 'min(100%, 360px)' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', width: '100%', maxWidth: 'min(100%, 520px)' }}>
             {/* Search Input */}
-            <div style={{ position: 'relative', width: '100%' }}>
+            <div style={{ position: 'relative', flex: '1 1 220px' }}>
               <Search
                 size={18}
                 style={{
@@ -362,32 +368,76 @@ const Home = () => {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+
+            {/* Sort Dropdown */}
+            <div style={{ position: 'relative', flex: '0 0 auto', minWidth: '160px' }}>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="input-field"
+                style={{ 
+                  height: '40px', 
+                  borderRadius: '8px', 
+                  fontSize: '0.85rem', 
+                  cursor: 'pointer', 
+                  padding: '0 0.75rem',
+                  width: '100%',
+                  background: 'var(--bg-secondary)',
+                  color: 'var(--text-primary)',
+                  borderColor: 'var(--border-color)'
+                }}
+              >
+                <option value="featured">Sort: Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Alphabetical (A - Z)</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Category Pills Navigation */}
         <div className="category-scroll-container" style={{ marginBottom: '2rem' }}>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              style={{
-                padding: '0.55rem 1.1rem',
-                fontSize: '0.825rem',
-                fontWeight: 600,
-                borderRadius: '8px',
-                whiteSpace: 'nowrap',
-                background: selectedCategory === cat ? 'var(--accent)' : 'var(--bg-tertiary)',
-                color: selectedCategory === cat ? '#ffffff' : 'var(--text-primary)',
-                border: selectedCategory === cat ? '1px solid var(--accent)' : '1px solid var(--border-color)',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: selectedCategory === cat ? '0 4px 14px rgba(225, 29, 72, 0.3)' : 'none'
-              }}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const count = categoryCounts[cat.name] || 0;
+            const isSelected = selectedCategory === cat.name;
+            return (
+              <button
+                key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
+                style={{
+                  padding: '0.55rem 1.1rem',
+                  fontSize: '0.825rem',
+                  fontWeight: 600,
+                  borderRadius: '9999px',
+                  whiteSpace: 'nowrap',
+                  background: isSelected ? 'var(--accent)' : 'var(--bg-tertiary)',
+                  color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                  border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border-color)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: isSelected ? '0 4px 14px rgba(225, 29, 72, 0.3)' : 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                }}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.name}</span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    background: isSelected ? 'rgba(255,255,255,0.25)' : 'var(--bg-secondary)',
+                    padding: '0.1rem 0.45rem',
+                    borderRadius: '10px',
+                    marginLeft: '0.2rem',
+                  }}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Loading & Error States */}
@@ -421,18 +471,18 @@ const Home = () => {
         ) : (
           /* Products Rendered Section-Wise */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
-            {(selectedCategory === 'All' && !search
-              ? categories.filter((cat) => cat !== 'All')
-              : [selectedCategory]
-            ).map((catName) => {
-              const categoryProducts = filteredProducts.filter(
-                (p) => p.category === catName || selectedCategory !== 'All' || search
-              );
+            {(selectedCategory === 'All'
+              ? categories.filter((cat) => cat.name !== 'All')
+              : categories.filter((cat) => cat.name === selectedCategory)
+            ).map((catObj) => {
+              const categoryProducts = selectedCategory === 'All'
+                ? filteredProducts.filter((p) => p.category === catObj.name)
+                : filteredProducts;
 
               if (categoryProducts.length === 0) return null;
 
               return (
-                <div key={catName} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div key={catObj.name} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   {/* Category Section Header */}
                   <div
                     style={{
@@ -444,11 +494,9 @@ const Home = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <span style={{ fontSize: '1.2rem' }}>
-                        {catName.includes('Snacks') ? '🍇' : catName.includes('Kitchen') ? '🍳' : catName.includes('Cook') ? '🍲' : catName.includes('Wellness') ? '🌿' : '🍫'}
-                      </span>
-                      <h3 style={{ fontSize: '1.35rem', color: 'var(--text-primary)', fontFamily: 'var(--font-headings)' }}>
-                        {catName}
+                      <span style={{ fontSize: '1.25rem' }}>{catObj.icon}</span>
+                      <h3 style={{ fontSize: '1.35rem', color: 'var(--text-primary)', fontFamily: 'var(--font-headings)', fontWeight: 700 }}>
+                        {catObj.name}
                       </h3>
                       <span
                         style={{
@@ -465,15 +513,21 @@ const Home = () => {
                       </span>
                     </div>
 
-                    <button
-                      onClick={() => setSelectedCategory(catName)}
-                      style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer' }}
-                    >
-                      View All →
-                    </button>
+                    {selectedCategory === 'All' && (
+                      <button
+                        onClick={() => {
+                          setSelectedCategory(catObj.name);
+                          const el = document.getElementById('catalog');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer', background: 'none', border: 'none' }}
+                      >
+                        View All →
+                      </button>
+                    )}
                   </div>
 
-                  {/* Products Grid - 3 per line on mobile */}
+                  {/* Products Grid */}
                   <div className="grid-responsive">
                     {categoryProducts.map((product) => (
                       <div

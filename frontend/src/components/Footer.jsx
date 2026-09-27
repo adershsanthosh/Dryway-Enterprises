@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Leaf } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -82,12 +82,10 @@ const Footer = () => {
           >
             <li>
               <a 
-                href="https://thedryway.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ color: '#f97316', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}
+                href="#catalog" 
+                style={{ color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', textDecoration: 'none' }}
               >
-                thedryway.com <ExternalLink size={12} />
+                Shop Full Catalog
               </a>
             </li>
             <li>Contact & Support</li>
