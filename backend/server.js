@@ -25,12 +25,25 @@ mongoose.set('bufferCommands', false);
 
 const app = express();
 
-// Standard middlewares with dynamic CORS support
+// Bulletproof dynamic CORS headers for Vercel, mobile, and localhost
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow all origins (Vercel, localhost, mobile, etc.) and reflect the origin header
-    return callback(null, true);
-  },
+  origin: true,
   credentials: true,
 };
 app.use(cors(corsOptions));
