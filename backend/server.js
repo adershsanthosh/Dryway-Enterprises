@@ -28,15 +28,8 @@ const app = express();
 // Standard middlewares with dynamic CORS support
 const corsOptions = {
   origin: (origin, callback) => {
-    // allow requests with no origin (like mobile apps, curl, or same-origin)
-    if (!origin) return callback(null, true);
-    // Allow any localhost port, 127.0.0.1, or specified CLIENT_URL
-    const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-    const isAllowedClient = process.env.CLIENT_URL && origin === process.env.CLIENT_URL;
-    if (isLocal || isAllowedClient) {
-      return callback(null, origin);
-    }
-    return callback(null, origin);
+    // Allow all origins (Vercel, localhost, mobile, etc.) and reflect the origin header
+    return callback(null, true);
   },
   credentials: true,
 };
