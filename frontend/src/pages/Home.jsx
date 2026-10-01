@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import { LanguageContext } from '../context/LanguageContext';
 import { API_BASE_URL } from '../config';
+import { fallbackProducts } from '../data/fallbackProducts';
 import { 
   ShoppingBag, 
   Eye, 
@@ -21,8 +22,9 @@ import {
 } from 'lucide-react';
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(fallbackProducts);
+  const [loading, setLoading] = useState(false);
+  const [isLive, setIsLive] = useState(false);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -33,23 +35,31 @@ const Home = () => {
   const { t } = useContext(LanguageContext);
 
   const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
     try {
       let res;
       const primaryUrl = API_BASE_URL ? `${API_BASE_URL}/api/products` : '/api/products';
       try {
         res = await fetch(primaryUrl);
       } catch (err1) {
-        // Secondary fallback to direct IPv4 localhost
-        res = await fetch('http://127.0.0.1:5001/api/products');
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          res = await fetch('http://127.0.0.1:5001/api/products');
+        } else {
+          throw err1;
+        }
       }
-      if (!res.ok) throw new Error('Failed to load products');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setProducts(data);
-      setLoading(false);
+      if (Array.isArray(data) && data.length > 0) {
+        setProducts(data);
+        setIsLive(true);
+        setError(null);
+      }
     } catch (err) {
+      console.warn('Backend unavailable, using resilient catalog fallback:', err);
+      setIsLive(false);
       setError(err.message);
+      // Products already initialized with fallbackProducts
+    } finally {
       setLoading(false);
     }
   };
@@ -450,12 +460,53 @@ const Home = () => {
           })}
         </div>
 
-        {/* Loading & Error States */}
+        {/* Non-blocking Live Backend Reconnect Notice when offline or spinning up */}
+        {!isLive && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '0.8rem',
+              background: 'rgba(217, 29, 73, 0.08)',
+              border: '1px solid rgba(217, 29, 73, 0.25)',
+              padding: '0.8rem 1.25rem',
+              borderRadius: 'var(--radius-md)',
+              marginBottom: '2rem',
+              fontSize: '0.88rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: '1.1rem' }}>⚡</span>
+              <span>
+                <strong>Instant Catalog Active</strong> – {error ? `Connecting to backend (${error}). Showing ready-to-order catalog.` : 'Connecting to backend service...'}
+              </span>
+            </div>
+            <button
+              onClick={() => fetchProducts()}
+              style={{
+                background: 'var(--primary, #d91d49)',
+                color: '#fff',
+                border: 'none',
+                padding: '0.4rem 1rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.82rem',
+              }}
+            >
+              🔄 Reconnect Live
+            </button>
+          </div>
+        )}
+
+        {/* Loading & Empty States */}
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '30vh' }}>
             <div style={{ width: '36px', height: '36px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#d91d49', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
           </div>
-        ) : error ? (
+        ) : error && products.length === 0 ? (
           <div
             style={{
               display: 'flex',
@@ -475,7 +526,7 @@ const Home = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <AlertCircle size={24} />
-              <span>Database offline or API failed. Ensure Node backend is running.</span>
+              <span>Database offline or API failed ({error}). Ensure Node backend is running.</span>
             </div>
             <button
               onClick={() => fetchProducts()}

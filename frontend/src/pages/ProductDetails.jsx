@@ -21,11 +21,13 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+import { fallbackProducts } from '../data/fallbackProducts';
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState(() => fallbackProducts.find((p) => p._id === id) || null);
+  const [loading, setLoading] = useState(() => !fallbackProducts.some((p) => p._id === id));
   const [error, setError] = useState(null);
   const [qty, setQty] = useState(1);
 
@@ -55,8 +57,14 @@ const ProductDetails = () => {
         setProduct(data);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        const fallback = fallbackProducts.find((p) => p._id === id);
+        if (fallback) {
+          setProduct(fallback);
+          setLoading(false);
+        } else {
+          setError(err.message);
+          setLoading(false);
+        }
       }
     };
     fetchProduct();
