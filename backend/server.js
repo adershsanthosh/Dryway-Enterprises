@@ -27,7 +27,17 @@ const app = express();
 
 // Standard middlewares with dynamic CORS support
 const corsOptions = {
-  origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:3000'] : '*',
+  origin: (origin, callback) => {
+    // allow requests with no origin (like mobile apps, curl, or same-origin)
+    if (!origin) return callback(null, true);
+    // Allow any localhost port, 127.0.0.1, or specified CLIENT_URL
+    const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    const isAllowedClient = process.env.CLIENT_URL && origin === process.env.CLIENT_URL;
+    if (isLocal || isAllowedClient) {
+      return callback(null, origin);
+    }
+    return callback(null, origin);
+  },
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -106,9 +116,9 @@ const connectDB = async () => {
 
 // Start Server
 connectDB().then(() => {
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, () => {
     console.log(
-      `Dryway Server initialized on Port ${PORT} (http://0.0.0.0:${PORT} / http://localhost:${PORT})`
+      `Dryway Server initialized on Port ${PORT} (http://localhost:${PORT})`
     );
   });
 });

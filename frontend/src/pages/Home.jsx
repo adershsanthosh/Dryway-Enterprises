@@ -32,19 +32,29 @@ const Home = () => {
   const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
   const { t } = useContext(LanguageContext);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let res;
+      const primaryUrl = API_BASE_URL ? `${API_BASE_URL}/api/products` : '/api/products';
       try {
-        const res = await fetch(`${API_BASE_URL}/api/products`);
-        if (!res.ok) throw new Error('Failed to load products');
-        const data = await res.json();
-        setProducts(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        res = await fetch(primaryUrl);
+      } catch (err1) {
+        // Secondary fallback to direct IPv4 localhost
+        res = await fetch('http://127.0.0.1:5001/api/products');
       }
-    };
+      if (!res.ok) throw new Error('Failed to load products');
+      const data = await res.json();
+      setProducts(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -449,20 +459,39 @@ const Home = () => {
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.8rem',
+              gap: '1rem',
               background: 'rgba(239, 68, 68, 0.1)',
               border: '1px solid var(--error)',
               color: 'var(--error)',
               padding: '1.5rem',
               borderRadius: 'var(--radius-md)',
-              maxWidth: '500px',
+              maxWidth: '520px',
               margin: '0 auto',
+              textAlign: 'center',
             }}
           >
-            <AlertCircle size={24} />
-            <span>Database offline or API failed. Ensure Node backend is running.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <AlertCircle size={24} />
+              <span>Database offline or API failed. Ensure Node backend is running.</span>
+            </div>
+            <button
+              onClick={() => fetchProducts()}
+              style={{
+                background: 'var(--primary, #d91d49)',
+                color: '#fff',
+                border: 'none',
+                padding: '0.5rem 1.25rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+              }}
+            >
+              🔄 Retry Connection
+            </button>
           </div>
         ) : filteredProducts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
